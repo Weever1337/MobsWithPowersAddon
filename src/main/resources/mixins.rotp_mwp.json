@@ -1,0 +1,10 @@
+{
+  "compatibilityLevel": "JAVA_8",
+  "package": "net.weever.rotp_mwp.mixins",
+  "refmap": "mixins.rotp_mwp.refmap.json",
+  "minVersion": "0.8",
+  "mixins": [
+    "StandArrowMixin",
+    "StandVirusEffectMixin"
+  ]
+}

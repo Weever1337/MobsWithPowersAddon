@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="GNU GPL v3.0"
+[[mods]]
+modId = "${mod_id}"
+version = "${addon_version}"
+displayName = "${mod_name}"
+displayURL = "https://discord.gg/4GcjnMnXP4"
+authors = "${mod_authors}"
+logoFile="logo.png"
+credits="StandoByte"
+description='''
+An addon adds way to see mobs with powers from Ripples of The Past.
+'''
+[[dependencies.${mod_id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${mod_id}]]
+    modId="jojo"
+    mandatory=true
+    versionRange="[0.2.2,0.3)"
+    ordering="AFTER"
+    side="BOTH"
