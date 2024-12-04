@@ -2,6 +2,7 @@ package net.weever.rotp_mwp.entity.goal;
 
 import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
+import com.github.standobyte.jojo.action.stand.StandEntityBlock;
 import com.github.standobyte.jojo.action.stand.StandEntityLightAttack;
 import com.github.standobyte.jojo.entity.stand.StandEntity;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
@@ -63,7 +64,9 @@ public class StandAI extends Goal {
                                 } else {
                                     power.clickAction(randomAction, false, getActionTarget(), null);
                                 }
-                                setCooldown(randomAction, randomAction.getCooldownTechnical(power));
+                                if (!(randomAction instanceof StandEntityBlock)) {
+                                    setCooldown(randomAction, randomAction.getCooldownTechnical(power));
+                                }
                             }
                         }
                     }

@@ -11,7 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.weever.rotp_mwp.Config;
@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber(modid = MobsWithPowersAddon.MOD_ID)
 public class AddonUtil {
     @SubscribeEvent
-    public static void onLivingJoinWorld(EntityJoinWorldEvent event) {
+    public static void onLivingSpawn(LivingSpawnEvent event) {
         Entity entity = event.getEntity();
-        if (CapabilityAdderForAll.isBlockedEntity(entity)) return;
+        if (entity == null || CapabilityAdderForAll.isBlockedEntity(entity)) return;
         if (!entity.level.isClientSide() && entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
             if (livingEntity instanceof MobEntity) {
