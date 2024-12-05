@@ -77,6 +77,7 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockedEntities;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockedStandsForMobs;
         public final ForgeConfigSpec.BooleanValue useAddonStands;
+        public final ForgeConfigSpec.BooleanValue smallAnarchyWithStands;
         public final ForgeConfigSpec.BooleanValue spawnBoy2Man;
         private boolean loaded = false;
 
@@ -98,7 +99,7 @@ public class Config {
             blockedEntities = builder
                     .translation("rotp_mwp.config.blocked_entities")
                     .comment("    Blocked entities which cant have any Power")
-                    .defineList("blockedEntities", Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam"), obj -> obj instanceof String);
+                    .defineList("blockedEntities", Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_kq:sheer_heart"), obj -> obj instanceof String);
             blockedStandsForMobs = builder
                     .translation("rotp_mwp.config.blocked_stands")
                     .comment("    Blocked stands that cant have any mobs in them",
@@ -109,6 +110,10 @@ public class Config {
                     .translation("rotp.mwp.config.use_addon_stands")
                     .comment("    Mobs will have stands from addons. ALSO, MAYBE HAVE SOME PROBLEMS, CRASH REPORTS SEND TO ADDONS!!!!!!!!")
                     .define("useAddonStands", false);
+            smallAnarchyWithStands = builder
+                    .translation("rotp.mwp.config.smallanarchywithstands")
+                    .comment("    Adding a way to give a stand to stand to stand to stand to stand....")
+                    .define("smallAnarchyWithStands", false);
             spawnBoy2Man = builder
                     .translation("rotp.mwp.config.spawnboy2man")
                     .comment("    Boy2Man will spawn in villages... (WARNING: This kid in W.I.P in a mod, and can have some bugs)",
@@ -134,6 +139,7 @@ public class Config {
             private final List<String> blockedEntities;
             private final List<String> blockedStandsForMobs;
             private final boolean useAddonStands;
+            private final boolean smallAnarchyWithStands;
             private final boolean spawnBoy2Man;
 
             public SyncedValues(PacketBuffer buf) {
@@ -151,6 +157,7 @@ public class Config {
                 }
 
                 this.useAddonStands = buf.readBoolean();
+                this.smallAnarchyWithStands = buf.readBoolean();
                 this.spawnBoy2Man = buf.readBoolean();
             }
 
@@ -159,6 +166,7 @@ public class Config {
                 blockedEntities = (List<String>) config.blockedEntities.get();
                 blockedStandsForMobs = (List<String>) config.blockedStandsForMobs.get();
                 useAddonStands = config.useAddonStands.get();
+                smallAnarchyWithStands = config.smallAnarchyWithStands.get();
                 spawnBoy2Man = config.spawnBoy2Man.get();
             }
 
@@ -167,6 +175,7 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.blockedEntities.clearCache();
                 COMMON_SYNCED_TO_CLIENT.blockedStandsForMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.useAddonStands.clearCache();
+                COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.clearCache();
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.clearCache();
             }
 
@@ -190,6 +199,7 @@ public class Config {
                     buf.writeUtf(entity);
                 }
                 buf.writeBoolean(useAddonStands);
+                buf.writeBoolean(smallAnarchyWithStands);
                 buf.writeBoolean(spawnBoy2Man);
             }
 
@@ -198,6 +208,7 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.blockedEntities.set(blockedEntities);
                 COMMON_SYNCED_TO_CLIENT.blockedStandsForMobs.set(blockedStandsForMobs);
                 COMMON_SYNCED_TO_CLIENT.useAddonStands.set(useAddonStands);
+                COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.set(smallAnarchyWithStands);
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.set(spawnBoy2Man);
             }
         }

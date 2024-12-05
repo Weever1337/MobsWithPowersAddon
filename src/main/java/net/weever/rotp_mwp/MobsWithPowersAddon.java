@@ -6,7 +6,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.weever.rotp_mwp.init.InitStands;
 import net.weever.rotp_mwp.network.AddonPackets;
+import net.weever.rotp_mwp.util.CapabilityAdderForAll;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +20,8 @@ public class MobsWithPowersAddon {
     public MobsWithPowersAddon() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.commonSpec);
+        InitStands.ACTIONS.register(modEventBus);
+        InitStands.STANDS.register(modEventBus);
         modEventBus.addListener(this::onCommonSetup);
     }
 

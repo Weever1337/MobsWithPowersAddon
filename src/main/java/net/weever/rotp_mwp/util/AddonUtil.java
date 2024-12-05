@@ -1,17 +1,20 @@
 package net.weever.rotp_mwp.util;
 
+import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.TimeStop;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
 import com.github.standobyte.jojo.util.general.MathUtil;
+import com.github.standobyte.jojo.util.mod.JojoModUtil;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.weever.rotp_mwp.Config;
@@ -28,18 +31,19 @@ import java.util.stream.Collectors;
 @Mod.EventBusSubscriber(modid = MobsWithPowersAddon.MOD_ID)
 public class AddonUtil {
     @SubscribeEvent
-    public static void onLivingSpawn(LivingSpawnEvent event) {
+    public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
         if (entity == null || CapabilityAdderForAll.isBlockedEntity(entity)) return;
         if (!entity.level.isClientSide() && entity instanceof LivingEntity) {
             LivingEntity livingEntity = (LivingEntity) entity;
             if (livingEntity instanceof MobEntity) {
                 MobEntity mobEntity = (MobEntity) livingEntity;
-                if (mobEntity.getRandom().nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(entity.level.isClientSide()))) {
+                Random random = new Random();
+                if (random.nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(entity.level.isClientSide()))) {
                     IStandPower.getStandPowerOptional(mobEntity).ifPresent(power -> {
                         if (!power.hasPower()) {
-                            power.givePower(randomStand(mobEntity, mobEntity.getRandom()));
-                            power.setResolveLevel(livingEntity.getRandom().nextInt(4));
+                            power.givePower(randomStand(mobEntity, random));
+                            power.setResolveLevel(random.nextInt(4));
                         }
                     });
                 }
@@ -110,5 +114,13 @@ public class AddonUtil {
 
     public static float calculateFromPercentageToFloat(int percentage){
         return percentage / 100.0f; // wtf are you doing man
+    }
+
+    public static ActionTarget getActionTarget(LivingEntity livingEntity) {
+        RayTraceResult rayTrace = JojoModUtil.rayTrace(livingEntity.getEyePosition(1.0F), livingEntity.getLookAngle(), 3,
+                livingEntity.level, livingEntity, e -> !(e.is(livingEntity)), 0, 0);
+        ActionTarget target = ActionTarget.fromRayTraceResult(rayTrace);
+        target.resolveEntityId(livingEntity.level);
+        return target;
     }
 }

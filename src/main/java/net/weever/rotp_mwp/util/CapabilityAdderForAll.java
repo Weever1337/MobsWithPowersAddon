@@ -13,6 +13,7 @@ import net.minecraft.util.Util;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.weever.rotp_mwp.Config;
 import net.weever.rotp_mwp.MobsWithPowersAddon;
 
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ public class CapabilityAdderForAll {
     }
 
     public static boolean isBlockedEntity(Entity entity) {
+        if (Config.getCommonConfigInstance(entity.level.isClientSide()).smallAnarchyWithStands.get()){
+            blockedEntities.remove(StandEntity.class);
+        }
         String uniqueId = Objects.requireNonNull(entity.getType().getRegistryName()).toString();
         return blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass())) || getBlockedEntitiesList(entity.level.isClientSide()).contains(uniqueId);
     }

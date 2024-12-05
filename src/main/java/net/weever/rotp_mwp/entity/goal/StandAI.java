@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static net.weever.rotp_mwp.util.AddonUtil.getActionTarget;
+
 public class StandAI extends Goal {
     private final MobEntity mobEntity;
     private final Map<StandAction, Integer> cooldownMap = new HashMap<>();
@@ -56,13 +58,13 @@ public class StandAI extends Goal {
                             if (randomAction.getStaminaCost(power) <= power.getStamina()) {
                                 if (randomAction instanceof StandEntityLightAttack) {
                                     for (int i = 0; i < 5; i++) {
-                                        power.clickAction(randomAction, false, getActionTarget(), null);
+                                        power.clickAction(randomAction, false, getActionTarget(mobEntity), null);
                                     }
                                 }
                                 if (randomAction.getHoldDurationToFire(power) > 0) {
-                                    power.setHeldAction(randomAction, getActionTarget());
+                                    power.setHeldAction(randomAction, getActionTarget(mobEntity));
                                 } else {
-                                    power.clickAction(randomAction, false, getActionTarget(), null);
+                                    power.clickAction(randomAction, false, getActionTarget(mobEntity), null);
                                 }
                                 if (!(randomAction instanceof StandEntityBlock)) {
                                     setCooldown(randomAction, randomAction.getCooldownTechnical(power));
@@ -108,13 +110,5 @@ public class StandAI extends Goal {
                 cooldownMap.put(action, cooldown - 1);
             }
         });
-    }
-
-    private ActionTarget getActionTarget() {
-        RayTraceResult rayTrace = JojoModUtil.rayTrace(mobEntity.getEyePosition(1.0F), mobEntity.getLookAngle(), 3,
-                mobEntity.level, mobEntity, e -> !(e.is(mobEntity)), 0, 0);
-        ActionTarget target = ActionTarget.fromRayTraceResult(rayTrace);
-        target.resolveEntityId(mobEntity.level);
-        return target;
     }
 }
