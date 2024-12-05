@@ -20,6 +20,7 @@ import net.weever.rotp_mwp.actions.GiveRandomStand;
 import net.weever.rotp_mwp.actions.NoAi;
 import net.weever.rotp_mwp.actions.ToggleSummon;
 import net.weever.rotp_mwp.actions.UseRandomAction;
+import net.weever.rotp_mwp.power.impl.stand.type.DebugStandType;
 
 public class InitStands {
     @SuppressWarnings("unchecked")
@@ -45,7 +46,7 @@ public class InitStands {
 
     public static final RegistryObject<StandType<StandStats>> DEBUG_STAND = STANDS.register("debug_stand",
             () ->
-                    new NoManifestationStandType.Builder<>()
+                    new DebugStandType.Builder<>()
                             .color(0xFFFFFF)
                             .storyPartName(DEBUG)
                             .defaultStats(StandStats.class, new StandStats.Builder()

@@ -3,6 +3,8 @@ package net.weever.rotp_mwp.util;
 import com.github.standobyte.jojo.JojoMod;
 import com.github.standobyte.jojo.capability.entity.power.NonStandCapProvider;
 import com.github.standobyte.jojo.capability.entity.power.StandCapProvider;
+import com.github.standobyte.jojo.entity.mob.IMobPowerUser;
+import com.github.standobyte.jojo.entity.mob.IMobStandUser;
 import com.github.standobyte.jojo.entity.stand.StandEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -24,10 +26,12 @@ import static net.weever.rotp_mwp.util.AddonUtil.getBlockedEntitiesList;
 
 @Mod.EventBusSubscriber(modid = MobsWithPowersAddon.MOD_ID)
 public class CapabilityAdderForAll {
-    public static final List<Class<? extends Entity>> blockedEntities = Util.make(new ArrayList<>(), list -> {
+    public static final List<Class<?>> blockedEntities = Util.make(new ArrayList<>(), list -> {
         list.add(PlayerEntity.class);
         list.add(StandEntity.class);
         list.add(EnderDragonEntity.class);
+        list.add(IMobPowerUser.class);
+        list.add(IMobStandUser.class);
     });
     private static final ResourceLocation STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "stand");
     private static final ResourceLocation NON_STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "non_stand");

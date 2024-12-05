@@ -25,8 +25,9 @@ public class NoAi extends StandAction {
             if (CapabilityAdderForAll.isBlockedEntity(targetEntity)) {
                 return ActionConditionResult.NEGATIVE;
             }
+            return ActionConditionResult.POSITIVE;
         }
-        return ActionConditionResult.POSITIVE;
+        return ActionConditionResult.NEGATIVE;
     }
 
     @Override
