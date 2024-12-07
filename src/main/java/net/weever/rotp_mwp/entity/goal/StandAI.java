@@ -1,15 +1,11 @@
 package net.weever.rotp_mwp.entity.goal;
 
-import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.StandEntityBlock;
 import com.github.standobyte.jojo.action.stand.StandEntityLightAttack;
-import com.github.standobyte.jojo.entity.stand.StandEntity;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
-import com.github.standobyte.jojo.util.mod.JojoModUtil;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.RayTraceResult;
 import net.weever.rotp_mwp.util.AddonUtil;
 
 import java.util.HashMap;
@@ -50,7 +46,7 @@ public class StandAI extends Goal {
                     List<StandAction> actions = AddonUtil.getListOfUnlockedStandActions(power);
                     if (!actions.isEmpty()) {
                         List<StandAction> availableActions = actions.stream()
-                                .filter(action -> !isOnCooldown(action))
+                                .filter(action -> !isOnCooldown(action) && action.checkConditions(mobEntity, power, getActionTarget(mobEntity)).isPositive())
                                 .collect(Collectors.toList());
 
                         if (!availableActions.isEmpty()) {
@@ -66,9 +62,7 @@ public class StandAI extends Goal {
                                 } else {
                                     power.clickAction(randomAction, false, getActionTarget(mobEntity), null);
                                 }
-                                if (!(randomAction instanceof StandEntityBlock)) {
-                                    setCooldown(randomAction, randomAction.getCooldownTechnical(power));
-                                }
+                                setCooldown(randomAction, randomAction.getCooldownTechnical(power));
                             }
                         }
                     }

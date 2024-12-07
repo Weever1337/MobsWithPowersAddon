@@ -78,6 +78,7 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockedStandsForMobs;
         public final ForgeConfigSpec.BooleanValue useAddonStands;
         public final ForgeConfigSpec.BooleanValue smallAnarchyWithStands;
+        public final ForgeConfigSpec.BooleanValue dropStandDiscFromMobs;
         public final ForgeConfigSpec.BooleanValue spawnBoy2Man;
         private boolean loaded = false;
 
@@ -114,6 +115,11 @@ public class Config {
                     .translation("rotp.mwp.config.smallanarchywithstands")
                     .comment("    Adding a way to give a stand to stand to stand to stand to stand....")
                     .define("smallAnarchyWithStands", false);
+            dropStandDiscFromMobs = builder
+                    .translation("rotp.mwp.config.drop_stand_disc_from_mobs")
+                    .comment("    If enabled, Stand users drop their Stand's Disc upon death, BUT FOR MOB VERSION",
+                            "    - Works only when keepStandOnDeath (in jojo-common config) is set to false.")
+                    .define("dropStandDiscFromMobs", false);
             spawnBoy2Man = builder
                     .translation("rotp.mwp.config.spawnboy2man")
                     .comment("    Boy2Man will spawn in villages... (WARNING: This kid in W.I.P in a mod, and can have some bugs)",
@@ -140,10 +146,12 @@ public class Config {
             private final List<String> blockedStandsForMobs;
             private final boolean useAddonStands;
             private final boolean smallAnarchyWithStands;
+            private final boolean dropStandDiscFromMobs;
             private final boolean spawnBoy2Man;
 
             public SyncedValues(PacketBuffer buf) {
                 this.percentageChanceToGettingAStandForMob = buf.readInt();
+
                 int blockedEntitiesSize = buf.readInt();
                 this.blockedEntities = new ArrayList<>(blockedEntitiesSize);
                 for (int i = 0; i < blockedEntitiesSize; i++) {
@@ -158,6 +166,7 @@ public class Config {
 
                 this.useAddonStands = buf.readBoolean();
                 this.smallAnarchyWithStands = buf.readBoolean();
+                this.dropStandDiscFromMobs = buf.readBoolean();
                 this.spawnBoy2Man = buf.readBoolean();
             }
 
@@ -167,6 +176,7 @@ public class Config {
                 blockedStandsForMobs = (List<String>) config.blockedStandsForMobs.get();
                 useAddonStands = config.useAddonStands.get();
                 smallAnarchyWithStands = config.smallAnarchyWithStands.get();
+                dropStandDiscFromMobs = config.dropStandDiscFromMobs.get();
                 spawnBoy2Man = config.spawnBoy2Man.get();
             }
 
@@ -176,6 +186,7 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.blockedStandsForMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.useAddonStands.clearCache();
                 COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.clearCache();
+                COMMON_SYNCED_TO_CLIENT.dropStandDiscFromMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.clearCache();
             }
 
@@ -200,6 +211,7 @@ public class Config {
                 }
                 buf.writeBoolean(useAddonStands);
                 buf.writeBoolean(smallAnarchyWithStands);
+                buf.writeBoolean(dropStandDiscFromMobs);
                 buf.writeBoolean(spawnBoy2Man);
             }
 
@@ -209,6 +221,7 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.blockedStandsForMobs.set(blockedStandsForMobs);
                 COMMON_SYNCED_TO_CLIENT.useAddonStands.set(useAddonStands);
                 COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.set(smallAnarchyWithStands);
+                COMMON_SYNCED_TO_CLIENT.dropStandDiscFromMobs.set(dropStandDiscFromMobs);
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.set(spawnBoy2Man);
             }
         }

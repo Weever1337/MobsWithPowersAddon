@@ -7,9 +7,13 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.weever.rotp_mwp.util.AddonUtil;
 import net.weever.rotp_mwp.util.CapabilityAdderForAll;
+import net.weever.rotp_mwp.util.RainbowTextUtil;
 
 import java.util.Random;
 
@@ -40,6 +44,11 @@ public class NoAi extends StandAction {
                 }
             }
         }
+    }
+
+    @Override
+    public IFormattableTextComponent getTranslatedName(IStandPower power, String key) {
+        return RainbowTextUtil.getRainbowText("No Ai", false);
     }
 
     @Override

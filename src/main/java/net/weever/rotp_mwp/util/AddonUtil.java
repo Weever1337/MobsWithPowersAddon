@@ -60,6 +60,7 @@ public class AddonUtil {
         }
     }
 
+
     public static List<StandAction> getListOfUnlockedStandActions(IStandPower power) {
         List<StandAction> actions = new ArrayList<>();
         for (StandAction action : power.getAllUnlockedActions()) {

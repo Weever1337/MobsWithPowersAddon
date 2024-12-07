@@ -4,6 +4,7 @@
   "refmap": "mixins.rotp_mwp.refmap.json",
   "minVersion": "0.8",
   "mixins": [
+    "GameplayEventHandlerMixin",
     "StandArrowMixin",
     "StandVirusEffectMixin"
   ]

@@ -21,6 +21,7 @@ import net.weever.rotp_mwp.actions.NoAi;
 import net.weever.rotp_mwp.actions.ToggleSummon;
 import net.weever.rotp_mwp.actions.UseRandomAction;
 import net.weever.rotp_mwp.power.impl.stand.type.DebugStandType;
+import net.weever.rotp_mwp.util.RainbowTextUtil;
 
 public class InitStands {
     @SuppressWarnings("unchecked")
@@ -30,7 +31,7 @@ public class InitStands {
     public static final DeferredRegister<StandType<?>> STANDS = DeferredRegister.create(
             (Class<StandType<?>>) ((Class<?>) StandType.class), MobsWithPowersAddon.MOD_ID);
 
-    private static final ITextComponent DEBUG = new TranslationTextComponent("rotp_mwp.debug").withStyle(TextFormatting.DARK_GRAY);
+    private static final ITextComponent DEBUG = RainbowTextUtil.getRainbowText("Debug Stand", false);
 
     public static final RegistryObject<GiveRandomStand> GIVE_RANDOM_STAND = ACTIONS.register("give_random_stand",
             () -> new GiveRandomStand(new GiveRandomStand.Builder()));
