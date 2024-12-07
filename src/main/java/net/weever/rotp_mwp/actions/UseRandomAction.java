@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import static net.weever.rotp_mwp.util.AddonUtil.getActionTarget;
 
 public class UseRandomAction extends StandAction {
-    public UseRandomAction(AbstractBuilder<?> builder) {
+    public UseRandomAction(StandAction.Builder builder) {
         super(builder);
     }
 

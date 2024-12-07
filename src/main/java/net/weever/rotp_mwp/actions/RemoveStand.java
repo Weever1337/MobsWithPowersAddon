@@ -7,8 +7,6 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.weever.rotp_mwp.util.AddonUtil;
 import net.weever.rotp_mwp.util.CapabilityAdderForAll;
@@ -16,8 +14,8 @@ import net.weever.rotp_mwp.util.RainbowTextUtil;
 
 import java.util.Random;
 
-public class GiveRandomStand extends StandAction {
-    public GiveRandomStand(StandAction.Builder builder) {
+public class RemoveStand extends StandAction {
+    public RemoveStand(StandAction.Builder builder) {
         super(builder);
     }
 
@@ -38,10 +36,9 @@ public class GiveRandomStand extends StandAction {
         if (!world.isClientSide()){
             if (target.getEntity() instanceof LivingEntity && !CapabilityAdderForAll.isBlockedEntity(target.getEntity())) {
                 LivingEntity livingEntity = (LivingEntity) target.getEntity();
-                Random random = new Random();
                 IStandPower.getStandPowerOptional(livingEntity).ifPresent(standPower -> {
-                    standPower.givePower(AddonUtil.randomStand(livingEntity, random));
-                    standPower.setResolveLevel(4);
+                    standPower.clear();
+                    standPower.fullStandClear();
                 });
             }
         }
@@ -49,7 +46,7 @@ public class GiveRandomStand extends StandAction {
 
     @Override
     public IFormattableTextComponent getTranslatedName(IStandPower power, String key) {
-        return RainbowTextUtil.getRainbowText("Give Random Stand", false);
+        return RainbowTextUtil.getRainbowText("Remove Stand", false);
     }
 
     @Override

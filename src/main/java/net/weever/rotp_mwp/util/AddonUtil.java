@@ -3,18 +3,21 @@ package net.weever.rotp_mwp.util;
 import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.TimeStop;
+import com.github.standobyte.jojo.entity.mob.rps.RockPaperScissorsKidEntity;
+import com.github.standobyte.jojo.init.power.stand.ModStandsInit;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
 import com.github.standobyte.jojo.util.general.MathUtil;
 import com.github.standobyte.jojo.util.mod.JojoModUtil;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.weever.rotp_mwp.Config;
@@ -30,8 +33,8 @@ import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = MobsWithPowersAddon.MOD_ID)
 public class AddonUtil {
-    @SubscribeEvent
-    public static void onEntityJoinWorld(EntityJoinWorldEvent event) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onMobSpawn(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
         if (entity == null || CapabilityAdderForAll.isBlockedEntity(entity)) return;
         if (!entity.level.isClientSide() && entity instanceof LivingEntity) {
@@ -42,7 +45,12 @@ public class AddonUtil {
                 if (random.nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(entity.level.isClientSide()))) {
                     IStandPower.getStandPowerOptional(mobEntity).ifPresent(power -> {
                         if (!power.hasPower()) {
-                            power.givePower(randomStand(mobEntity, random));
+                            if (mobEntity.getType() == EntityType.VILLAGER && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(entity.level.isClientSide()).spawnBoy2Man.get()) {
+                                RockPaperScissorsKidEntity.turnFromArrow(mobEntity);
+                            } else {
+                                power.givePower(randomStand(mobEntity, random));
+                            }
+
                             power.setResolveLevel(random.nextInt(4));
                         }
                     });

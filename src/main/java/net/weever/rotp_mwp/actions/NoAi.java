@@ -18,7 +18,7 @@ import net.weever.rotp_mwp.util.RainbowTextUtil;
 import java.util.Random;
 
 public class NoAi extends StandAction {
-    public NoAi(AbstractBuilder<?> builder) {
+    public NoAi(StandAction.Builder builder) {
         super(builder);
     }
 

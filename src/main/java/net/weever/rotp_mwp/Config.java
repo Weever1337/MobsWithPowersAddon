@@ -3,6 +3,7 @@ package net.weever.rotp_mwp;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.InMemoryCommentedFormat;
 import com.github.standobyte.jojo.client.ClientUtil;
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
@@ -100,13 +101,13 @@ public class Config {
             blockedEntities = builder
                     .translation("rotp_mwp.config.blocked_entities")
                     .comment("    Blocked entities which cant have any Power")
-                    .defineList("blockedEntities", Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_kq:sheer_heart"), obj -> obj instanceof String);
+                    .defineListAllowEmpty(Lists.newArrayList("blockedEntities"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_kq:sheer_heart"), obj -> obj instanceof String);
             blockedStandsForMobs = builder
                     .translation("rotp_mwp.config.blocked_stands")
                     .comment("    Blocked stands that cant have any mobs in them",
                             "    - HAVE SOME PROBLEMS WITH: Harvest (with summon), Bad Company (with summon), Mandom (Because stand only for players), Weather Report (Because dont optimized for Mobs (using ServerPlayerEntity))",
                             "    - If you want to help to fix this problems - send crash reports to addons topics")
-                    .defineList("blockedStandsForMobs", Arrays.asList("rotp_mandom:mandom", "rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_wr:weather_report"), obj -> obj instanceof String);
+                    .defineListAllowEmpty(Lists.newArrayList("blockedStandsForMobs"), () -> Arrays.asList("rotp_mandom:mandom", "rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_wr:weather_report", "rotp_ctr:catch_the_rainbow", "rotp_metallica:metallica", "rotp_zwa:white_album"), obj -> obj instanceof String);
             useAddonStands = builder
                     .translation("rotp.mwp.config.use_addon_stands")
                     .comment("    Mobs will have stands from addons. ALSO, MAYBE HAVE SOME PROBLEMS, CRASH REPORTS SEND TO ADDONS!!!!!!!!")
@@ -122,8 +123,7 @@ public class Config {
                     .define("dropStandDiscFromMobs", false);
             spawnBoy2Man = builder
                     .translation("rotp.mwp.config.spawnboy2man")
-                    .comment("    Boy2Man will spawn in villages... (WARNING: This kid in W.I.P in a mod, and can have some bugs)",
-                            "    - Disabled.")
+                    .comment("    Boy2Man will spawn in villages... (WARNING: This kid W.I.P in a mod, and can have some bugs)")
                     .define("spawnBoy2Man", false);
             builder.pop();
 

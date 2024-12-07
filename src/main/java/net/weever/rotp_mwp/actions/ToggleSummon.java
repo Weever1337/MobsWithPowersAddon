@@ -17,7 +17,7 @@ import net.weever.rotp_mwp.util.RainbowTextUtil;
 import java.util.Random;
 
 public class ToggleSummon extends StandAction {
-    public ToggleSummon(AbstractBuilder<?> builder) {
+    public ToggleSummon(StandAction.Builder builder) {
         super(builder);
     }
 
