@@ -42,7 +42,7 @@ public class StandArrowMixin {
                     returnValue.set(false);
                 } else {
                     if (mobEntity.getRandom().nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(mobEntity.level.isClientSide()))) {
-                        if (mobEntity.getType() == EntityType.VILLAGER && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(mobEntity.level.isClientSide()).spawnBoy2Man.get()) {
+                        if (mobEntity instanceof VillagerEntity && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(mobEntity.level.isClientSide()).spawnBoy2Man.get()) {
                             RockPaperScissorsKidEntity.turnFromArrow(mobEntity);
                             returnValue.set(true);
                         } else {

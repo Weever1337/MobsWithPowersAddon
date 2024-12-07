@@ -7,8 +7,6 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.weever.rotp_mwp.util.AddonUtil;
 import net.weever.rotp_mwp.util.CapabilityAdderForAll;

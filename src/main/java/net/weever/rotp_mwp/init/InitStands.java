@@ -1,18 +1,9 @@
 package net.weever.rotp_mwp.init;
 
 import com.github.standobyte.jojo.action.Action;
-import com.github.standobyte.jojo.init.ModItems;
-import com.github.standobyte.jojo.item.StandDiscItem;
-import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.stats.StandStats;
-import com.github.standobyte.jojo.power.impl.stand.type.NoManifestationStandType;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
-import com.github.standobyte.jojo.util.mod.StoryPart;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.weever.rotp_mwp.MobsWithPowersAddon;

@@ -4,7 +4,6 @@ import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.TimeStop;
 import com.github.standobyte.jojo.entity.mob.rps.RockPaperScissorsKidEntity;
-import com.github.standobyte.jojo.init.power.stand.ModStandsInit;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
@@ -15,8 +14,6 @@ import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -45,7 +42,7 @@ public class AddonUtil {
                 if (random.nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(entity.level.isClientSide()))) {
                     IStandPower.getStandPowerOptional(mobEntity).ifPresent(power -> {
                         if (!power.hasPower()) {
-                            if (mobEntity.getType() == EntityType.VILLAGER && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(entity.level.isClientSide()).spawnBoy2Man.get()) {
+                            if (mobEntity instanceof VillagerEntity && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(entity.level.isClientSide()).spawnBoy2Man.get()) {
                                 RockPaperScissorsKidEntity.turnFromArrow(mobEntity);
                             } else {
                                 power.givePower(randomStand(mobEntity, random));
