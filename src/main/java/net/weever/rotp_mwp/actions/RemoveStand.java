@@ -3,16 +3,17 @@ package net.weever.rotp_mwp.actions;
 import com.github.standobyte.jojo.action.ActionConditionResult;
 import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
+import com.github.standobyte.jojo.init.ModItems;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.world.World;
-import net.weever.rotp_mwp.util.AddonUtil;
-import net.weever.rotp_mwp.util.CapabilityAdderForAll;
 import net.weever.rotp_mwp.util.RainbowTextUtil;
-
-import java.util.Random;
+import net.weever.rotp_mwp.util.TextureUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RemoveStand extends StandAction {
     public RemoveStand(StandAction.Builder builder) {
@@ -23,10 +24,9 @@ public class RemoveStand extends StandAction {
     public ActionConditionResult checkTarget(ActionTarget target, LivingEntity user, IStandPower power) {
         Entity targetEntity = target.getEntity();
         if (targetEntity instanceof LivingEntity) {
-            if (CapabilityAdderForAll.isBlockedEntity(targetEntity)) {
-                return ActionConditionResult.NEGATIVE;
+            if (IStandPower.getStandPowerOptional((LivingEntity) targetEntity).map(mobPower -> mobPower.getType() != null).orElse(false)) {
+                return ActionConditionResult.POSITIVE;
             }
-            return ActionConditionResult.POSITIVE;
         }
         return ActionConditionResult.NEGATIVE;
     }
@@ -34,7 +34,7 @@ public class RemoveStand extends StandAction {
     @Override
     protected void perform(World world, LivingEntity user, IStandPower power, ActionTarget target) {
         if (!world.isClientSide()){
-            if (target.getEntity() instanceof LivingEntity && !CapabilityAdderForAll.isBlockedEntity(target.getEntity())) {
+            if (target.getEntity() instanceof LivingEntity) {
                 LivingEntity livingEntity = (LivingEntity) target.getEntity();
                 IStandPower.getStandPowerOptional(livingEntity).ifPresent(standPower -> {
                     standPower.clear();
@@ -52,5 +52,14 @@ public class RemoveStand extends StandAction {
     @Override
     public TargetRequirement getTargetRequirement() {
         return TargetRequirement.ENTITY;
+    }
+
+    @Override
+    public @NotNull ResourceLocation getIconTexture(@Nullable IStandPower power) {
+        ResourceLocation randomizedTexture = TextureUtil.getResourceLocation(ModItems.STAND_REMOVER.get());
+        if (randomizedTexture != null) {
+            return randomizedTexture;
+        }
+        return super.getIconTexture(power);
     }
 }

@@ -3,6 +3,7 @@ package net.weever.rotp_mwp.util;
 import com.github.standobyte.jojo.JojoMod;
 import com.github.standobyte.jojo.capability.entity.power.NonStandCapProvider;
 import com.github.standobyte.jojo.capability.entity.power.StandCapProvider;
+import com.github.standobyte.jojo.entity.SoulEntity;
 import com.github.standobyte.jojo.entity.mob.IMobPowerUser;
 import com.github.standobyte.jojo.entity.mob.IMobStandUser;
 import com.github.standobyte.jojo.entity.stand.StandEntity;
@@ -20,7 +21,6 @@ import net.weever.rotp_mwp.MobsWithPowersAddon;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static net.weever.rotp_mwp.util.AddonUtil.getBlockedEntitiesList;
 
@@ -32,6 +32,7 @@ public class CapabilityAdderForAll {
         list.add(EnderDragonEntity.class);
         list.add(IMobPowerUser.class);
         list.add(IMobStandUser.class);
+        list.add(SoulEntity.class);
     });
     private static final ResourceLocation STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "stand");
     private static final ResourceLocation NON_STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "non_stand");
@@ -50,7 +51,11 @@ public class CapabilityAdderForAll {
         if (Config.getCommonConfigInstance(entity.level.isClientSide()).smallAnarchyWithStands.get()){
             blockedEntities.remove(StandEntity.class);
         }
-        String uniqueId = Objects.requireNonNull(entity.getType().getRegistryName()).toString();
-        return blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass())) || getBlockedEntitiesList(entity.level.isClientSide()).contains(uniqueId);
+        try {
+            String uniqueId = entity.getType().getRegistryName().toString();
+            return blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass())) || getBlockedEntitiesList(entity.level.isClientSide()).contains(uniqueId);
+        } catch (NullPointerException exception) {
+            return blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass()));
+        }
     }
 }

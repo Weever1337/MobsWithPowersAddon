@@ -4,12 +4,16 @@ import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.TimeStop;
 import com.github.standobyte.jojo.entity.mob.rps.RockPaperScissorsKidEntity;
+import com.github.standobyte.jojo.power.IPower;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
 import com.github.standobyte.jojo.util.general.MathUtil;
 import com.github.standobyte.jojo.util.mod.JojoModUtil;
-import net.minecraft.entity.*;
+import net.minecraft.entity.CreatureEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.util.math.RayTraceResult;
@@ -47,7 +51,6 @@ public class AddonUtil {
                             } else {
                                 power.givePower(randomStand(mobEntity, random));
                             }
-
                             power.setResolveLevel(random.nextInt(4));
                         }
                     });

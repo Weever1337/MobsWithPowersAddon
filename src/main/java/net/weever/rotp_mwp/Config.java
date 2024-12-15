@@ -107,7 +107,7 @@ public class Config {
                     .comment("    Blocked stands that cant have any mobs in them",
                             "    - HAVE SOME PROBLEMS WITH: Harvest (with summon), Bad Company (with summon), Mandom (Because stand only for players), Weather Report (Because dont optimized for Mobs (using ServerPlayerEntity))",
                             "    - If you want to help to fix this problems - send crash reports to addons topics")
-                    .defineListAllowEmpty(Lists.newArrayList("blockedStandsForMobs"), () -> Arrays.asList("rotp_mandom:mandom", "rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_wr:weather_report", "rotp_ctr:catch_the_rainbow", "rotp_metallica:metallica", "rotp_zwa:white_album"), obj -> obj instanceof String);
+                    .defineListAllowEmpty(Lists.newArrayList("blockedStandsForMobs"), () -> Arrays.asList("rotp_mandom:mandom", "rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_wr:weather_report", "rotp_ctr:catch_the_rainbow", "rotp_metallica:metallica", "rotp_zwa:white_album", "rotp_wou:wonder_of_you", "rotp_wonderofu:wonderofu"), obj -> obj instanceof String);
             useAddonStands = builder
                     .translation("rotp.mwp.config.use_addon_stands")
                     .comment("    Mobs will have stands from addons. ALSO, MAYBE HAVE SOME PROBLEMS, CRASH REPORTS SEND TO ADDONS!!!!!!!!")

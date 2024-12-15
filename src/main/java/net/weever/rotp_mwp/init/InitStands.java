@@ -19,7 +19,7 @@ public class InitStands {
     public static final DeferredRegister<StandType<?>> STANDS = DeferredRegister.create(
             (Class<StandType<?>>) ((Class<?>) StandType.class), MobsWithPowersAddon.MOD_ID);
 
-    private static final ITextComponent DEBUG = RainbowTextUtil.getRainbowText("Debug Stand", false);
+    private static final ITextComponent DEBUG = RainbowTextUtil.getRainbowText("Debug Part", false);
 
     public static final RegistryObject<GiveRandomStand> GIVE_RANDOM_STAND = ACTIONS.register("give_random_stand",
             () -> new GiveRandomStand(new GiveRandomStand.Builder()));

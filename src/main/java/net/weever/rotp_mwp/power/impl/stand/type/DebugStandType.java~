@@ -37,7 +37,7 @@ public class DebugStandType<T extends StandStats> extends StandType<T> {
         if (randomizedTexture != null) {
             return randomizedTexture;
         }
-
+        
         return super.getIconTexture(power);
     }
 

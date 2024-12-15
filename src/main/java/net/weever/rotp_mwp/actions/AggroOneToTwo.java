@@ -7,9 +7,14 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.world.World;
 import net.weever.rotp_mwp.util.RainbowTextUtil;
+import net.weever.rotp_mwp.util.TextureUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class AggroOneToTwo extends StandAction {
     public AggroOneToTwo(StandAction.Builder builder) {
@@ -19,7 +24,8 @@ public class AggroOneToTwo extends StandAction {
     public MobEntity firstTarget;
 
     @Override
-    public ActionConditionResult checkTarget(ActionTarget target, LivingEntity user, IStandPower power) {
+    public ActionConditionResult checkRangeAndTarget(ActionTarget target, LivingEntity user, IStandPower power) {
+        super.checkRangeAndTarget(target,user,power);
         Entity targetEntity = target.getEntity();
         if (targetEntity instanceof LivingEntity) {
             return ActionConditionResult.POSITIVE;
@@ -55,5 +61,14 @@ public class AggroOneToTwo extends StandAction {
     @Override
     public TargetRequirement getTargetRequirement() {
         return TargetRequirement.ENTITY;
+    }
+
+    @Override
+    public @NotNull ResourceLocation getIconTexture(@Nullable IStandPower power) {
+        ResourceLocation randomizedTexture = TextureUtil.getResourceLocation(Items.IRON_SWORD);
+        if (randomizedTexture != null) {
+            return randomizedTexture;
+        }
+        return super.getIconTexture(power);
     }
 }

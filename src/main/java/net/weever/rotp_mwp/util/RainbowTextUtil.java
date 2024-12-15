@@ -12,7 +12,14 @@ public class RainbowTextUtil { // wtf bro
             TextFormatting.GREEN,
             TextFormatting.AQUA,
             TextFormatting.BLUE,
-            TextFormatting.LIGHT_PURPLE
+            TextFormatting.LIGHT_PURPLE,
+            TextFormatting.OBFUSCATED,
+            TextFormatting.DARK_RED,
+            TextFormatting.DARK_GREEN,
+            TextFormatting.DARK_AQUA,
+            TextFormatting.DARK_BLUE,
+            TextFormatting.DARK_PURPLE,
+            TextFormatting.OBFUSCATED
     };
 
     public static IFormattableTextComponent getRainbowText(String text, boolean bold) {
