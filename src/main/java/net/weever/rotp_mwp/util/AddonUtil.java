@@ -4,7 +4,6 @@ import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.TimeStop;
 import com.github.standobyte.jojo.entity.mob.rps.RockPaperScissorsKidEntity;
-import com.github.standobyte.jojo.power.IPower;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
@@ -17,6 +16,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -117,6 +117,14 @@ public class AddonUtil {
         return Config.getCommonConfigInstance(clientSide).blockedStandsForMobs.get();
     }
 
+    public static List<? extends String> getBlockedStandActionsList(boolean clientSide) {
+        return Config.getCommonConfigInstance(clientSide).blockedStandActionsForMobs.get();
+    }
+
+    public static List<? extends String> getLongRangeStandsList(boolean clientSide) {
+        return Config.getCommonConfigInstance(clientSide).longRangeStands.get();
+    }
+
     public static int getPercentageOfGettingStand(boolean clientSide){
         return Config.getCommonConfigInstance(clientSide).percentageChanceToGettingAStandForMob.get();
     }
@@ -131,5 +139,13 @@ public class AddonUtil {
         ActionTarget target = ActionTarget.fromRayTraceResult(rayTrace);
         target.resolveEntityId(livingEntity.level);
         return target;
+    }
+
+    public static float getStandRange(StandType<?> standType, World level) {
+        if (standType == null) return 0;
+        if (CapabilityAdderForAll.isLongRangeStand(standType, level)) {
+            return 32;
+        }
+        return 12.5f;
     }
 }

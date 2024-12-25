@@ -6,6 +6,7 @@
   "mixins": [
     "GameplayEventHandlerMixin",
     "StandArrowMixin",
+    "StandCommandMixin",
     "StandEntityMixin",
     "StandVirusEffectMixin"
   ]

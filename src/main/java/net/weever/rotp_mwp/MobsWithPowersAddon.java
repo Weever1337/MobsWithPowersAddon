@@ -8,7 +8,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.weever.rotp_mwp.init.InitStands;
 import net.weever.rotp_mwp.network.AddonPackets;
-import net.weever.rotp_mwp.util.CapabilityAdderForAll;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,6 +30,6 @@ public class MobsWithPowersAddon {
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
         AddonPackets.init();
-//        RPSKid.setupSpawnPlacement();
+//        CastExceptionReturn.setupGlobalHandler(ModList.get().getMods().stream().map(mod -> mod.getModId()).collect(Collectors.toList()), Config.getCommonConfigInstance(false).removeCastExceptionCrash.get());
     }
 }

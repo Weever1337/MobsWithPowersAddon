@@ -7,6 +7,8 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -54,7 +56,7 @@ public class AggroOneToTwo extends StandAction {
         if (firstTarget == null) {
             return RainbowTextUtil.getRainbowText("Aggro One To Two Entity", false);
         } else {
-            return RainbowTextUtil.getRainbowText("Aggro " + firstTarget.getName().getString() + " To Two Entity", false);
+            return RainbowTextUtil.getRainbowText("Aggro [" + firstTarget.getName().getString() + "] To Two Entity", false);
         }
     }
 

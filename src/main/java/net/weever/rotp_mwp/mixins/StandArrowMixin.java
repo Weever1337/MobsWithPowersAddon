@@ -6,7 +6,6 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
 import com.github.standobyte.jojo.util.mc.damage.DamageUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.item.ItemStack;
@@ -42,7 +41,7 @@ public class StandArrowMixin {
                     returnValue.set(false);
                 } else {
                     if (mobEntity.getRandom().nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(mobEntity.level.isClientSide()))) {
-                        if (mobEntity instanceof VillagerEntity && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(mobEntity.level.isClientSide()).spawnBoy2Man.get()) {
+                        if (mobEntity instanceof VillagerEntity && mobEntity.isBaby() && Config.getCommonConfigInstance(mobEntity.level.isClientSide()).spawnBoy2Man.get()) {
                             RockPaperScissorsKidEntity.turnFromArrow(mobEntity);
                             returnValue.set(true);
                         } else {

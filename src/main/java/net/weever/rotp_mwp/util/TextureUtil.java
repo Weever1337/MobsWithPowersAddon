@@ -1,6 +1,7 @@
 package net.weever.rotp_mwp.util;
 
 import com.github.standobyte.jojo.action.Action;
+import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.init.power.JojoCustomRegistries;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
 import net.minecraft.block.Block;
@@ -9,6 +10,10 @@ import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TextureUtil {
     @Nullable
@@ -67,11 +72,14 @@ public class TextureUtil {
 
     @Nullable
     public static ResourceLocation getRandomActionTexture() {
-        Action[] ACTIONS = JojoCustomRegistries.ACTIONS.getRegistry().getValues().stream().toArray(Action[]::new);
+        List<StandAction> STAND_ACTIONS = Arrays.stream(JojoCustomRegistries.ACTIONS.getRegistry().getValues().toArray(new Action[0]))
+                .filter(action -> action instanceof StandAction)
+                .map(action -> (StandAction) action)
+                .collect(Collectors.toList());
         long millis = System.currentTimeMillis();
-        int index = (int) ((millis / 1000) % ACTIONS.length);
+        int index = (int) ((millis / 1000) % STAND_ACTIONS.size());
 
-        return getResourceLocation(ACTIONS[index]);
+        return getResourceLocation(STAND_ACTIONS.get(index));
     }
 
     @Nullable

@@ -75,7 +75,7 @@ public class GiveRandomStand extends StandAction {
     @Override
     public IFormattableTextComponent getTranslatedName(IStandPower power, String key) {
         if (standInstanceFromDisc != null) {
-            return RainbowTextUtil.getRainbowText("Give " + standInstanceFromDisc.getName().getString(), false);
+            return RainbowTextUtil.getRainbowText("Give [" + standInstanceFromDisc.getName().getString() + "] Stand", false);
         }
         return RainbowTextUtil.getRainbowText("Give Random Stand", false);
     }
