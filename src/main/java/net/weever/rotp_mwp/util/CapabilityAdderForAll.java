@@ -40,13 +40,14 @@ public class CapabilityAdderForAll {
     });
 
     private static final ArrayList<String> blockedStandActions = Util.make(new ArrayList<>(), list -> {
-        list.add(ModStandsInit.STAR_PLATINUM_ZOOM.toString());
-        list.add(ModStandsInit.STAR_PLATINUM_INHALE.toString());
-        list.add(ModStandsInit.MAGICIANS_RED_DETECTOR.toString());
-        list.add(ModStandsInit.CRAZY_DIAMOND_REPAIR.toString());
-        list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_BULLET.toString());
-        list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_ANCHOR_MOVE.toString());
+        list.add(ModStandsInit.STAR_PLATINUM_ZOOM.getId().toString());
+        list.add(ModStandsInit.STAR_PLATINUM_INHALE.getId().toString());
+        list.add(ModStandsInit.MAGICIANS_RED_DETECTOR.getId().toString());
+        list.add(ModStandsInit.CRAZY_DIAMOND_REPAIR.getId().toString());
+        list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_BULLET.getId().toString());
+        list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_ANCHOR_MOVE.getId().toString());
     });
+
 
     private static final ResourceLocation STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "stand");
     private static final ResourceLocation NON_STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "non_stand");

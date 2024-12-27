@@ -2,6 +2,7 @@ package net.weever.rotp_mwp.mixins;
 
 import com.github.standobyte.jojo.entity.stand.StandEntity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -58,6 +59,34 @@ public abstract class StandEntityMixin {
 
             applyBabyAttributes(standEntity, scaleFactor);
         }
+    }
+
+    @Inject(method = "defaultRotation", at = @At(value = "HEAD"), cancellable = true)
+    private void defaultRotation(CallbackInfo ci) {
+        StandEntity standEntity = (StandEntity) (Object) this;
+        LivingEntity user = standEntity.getUser();
+        if (user != null && !standEntity.isManuallyControlled() && !standEntity.isRemotePositionFixed()) {
+            if (user instanceof MobEntity) {
+                MobEntity mobUser = (MobEntity) user;
+                LivingEntity target = mobUser.getTarget();
+
+                if (target != null) {
+                    double deltaX = target.getX() - standEntity.getX();
+                    double deltaY = target.getEyeY() - standEntity.getEyeY();
+                    double deltaZ = target.getZ() - standEntity.getZ();
+
+                    float yRot = (float) (Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90.0F);
+                    float xRot = (float) -Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ)));
+
+                    standEntity.setRot(yRot, xRot);
+                }
+            } else {
+                standEntity.setRot(user.yRot, user.xRot);
+            }
+        }
+
+        standEntity.setYHeadRot(standEntity.yRot);
+        ci.cancel();
     }
 
     @Unique
