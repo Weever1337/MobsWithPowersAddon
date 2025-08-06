@@ -5,6 +5,7 @@ import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.weever.rotp_mwp.Config;
 import net.weever.rotp_mwp.MobsWithPowersAddon;
 import net.weever.rotp_mwp.mechanics.combo.ComboManager;
 import net.weever.rotp_mwp.mechanics.combo.ComboStep;
@@ -76,7 +77,22 @@ public class StandAI extends Goal {
         String standId = power.getType().getRegistryName().toString();
         StandComboData comboData = ComboManager.getDataForStand(standId);
 
-        if (comboData == null) {
+        if (comboData != null && comboData.getBlockAction() != null) {
+            String blockActionName = comboData.getBlockAction();
+            StandAction blockAction = allActions.get(blockActionName);
+
+            boolean wasRecentlyHurt = mobEntity.getLastHurtByMob() != null && mobEntity.tickCount - mobEntity.getLastHurtByMobTimestamp() < 40;
+            boolean shouldPreemptivelyBlock = random.nextFloat() < 0.15f;
+
+            if (blockAction != null && (wasRecentlyHurt || shouldPreemptivelyBlock)) {
+                if (isActionAvailable(power, blockAction, null, mobEntity.distanceTo(target))) {
+                    performAction(power, blockAction);
+                    return;
+                }
+            }
+        }
+
+        if (comboData == null || !Config.getCommonConfigInstance(mobEntity.level.isClientSide).useWIPComboSystem.get()) {
             performRandomAvailableAction(power, allActions, target);
         } else {
             performComboLogic(power, comboData, allActions, target);

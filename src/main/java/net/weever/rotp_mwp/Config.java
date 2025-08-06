@@ -83,7 +83,8 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue smallAnarchyWithStands;
         public final ForgeConfigSpec.BooleanValue dropStandDiscFromMobs;
         public final ForgeConfigSpec.BooleanValue spawnBoy2Man;
-        public final ForgeConfigSpec.BooleanValue removeCastExceptionCrash;
+//        public final ForgeConfigSpec.BooleanValue removeCastExceptionCrash;
+        public final ForgeConfigSpec.BooleanValue useWIPComboSystem;
         private boolean loaded = false;
 
         private Common(ForgeConfigSpec.Builder builder) {
@@ -104,7 +105,7 @@ public class Config {
             blockedEntities = builder
                     .translation("rotp_mwp.config.blocked_entities")
                     .comment("    Blocked entities which cant have any Power")
-                    .defineListAllowEmpty(Lists.newArrayList("blockedEntities"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_zkq:sheer_heart"), obj -> obj instanceof String);
+                    .defineListAllowEmpty(Lists.newArrayList("blockedEntities"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_zkq:sheer_heart", "rotp_stfn:player_arm", "rotp_stfn:player_leg", "rotp_stfn:player_head"), obj -> obj instanceof String);
             blockedStandsForMobs = builder
                     .translation("rotp_mwp.config.blocked_stands")
                     .comment("    Blocked stands that cant have any mobs in them",
@@ -113,7 +114,7 @@ public class Config {
                     .defineListAllowEmpty(Lists.newArrayList("blockedStandsForMobs"), () -> Arrays.asList("rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_wr:weather_report", "rotp_ctr:catch_the_rainbow", "rotp_metallica:metallica", "rotp_zwa:white_album", "rotp_wou:wonder_of_you", "rotp_wonderofu:wonderofu", "rotp_lovers:lovers"), obj -> obj instanceof String);
             blockedStandActionsForMobs = builder
                     .translation("rotp_mwp.config.blocked_actions")
-                    .comment("    Blocked stand actions for Mobs. They cant use them. By default: SP's Zoom, SP's Inhale, MR's Detector, CD's Repair, CD's Block Bullet, CD's Anchor Move")
+                    .comment("    Blocked stand actions for Mobs. They cant use them. By default: SP's Zoom, CD's Repair, CD's Anchor Move")
                     .defineListAllowEmpty(Lists.newArrayList("blockedStandActions"), () -> Arrays.asList("rotp_harvest:search", "rotp_harvest:go_to_this_place", "rotp_harvest:set_target", "rotp_harvest:forget_target", "rotp_zbc:set_target", "rotp_zbc:forget_target", "rotp_harvest:stay_with", "rotp_harvest:carry_up"), obj -> obj instanceof String);
             longRangeStands = builder
                     .translation("rotp_mwp.config.long_range_stands")
@@ -136,10 +137,14 @@ public class Config {
                     .translation("rotp.mwp.config.spawnboy2man")
                     .comment("    Boy2Man will spawn in villages... (WARNING: This kid W.I.P in a mod, and can have some bugs)")
                     .define("spawnBoy2Man", false);
-            removeCastExceptionCrash = builder
-                    .translation("rotp.mwp.config.remove_cast_exception_crash")
-                    .comment("    Remove cast exception crash")
-                    .define("removeCastExceptionCrash", false);
+//            removeCastExceptionCrash = builder
+//                    .translation("rotp.mwp.config.remove_cast_exception_crash")
+//                    .comment("    Remove cast exception crash")
+//                    .define("removeCastExceptionCrash", false);
+            useWIPComboSystem = builder
+                    .translation("rotp.mwp.config.usewipcombosystem")
+                    .comment("    Use W.I.P Combo System. If it's false mobs will use random abilities")
+                    .define("useWIPComboSystem", true);
             builder.pop();
 
             if (mainPath != null) {
@@ -165,7 +170,8 @@ public class Config {
             private final boolean smallAnarchyWithStands;
             private final boolean dropStandDiscFromMobs;
             private final boolean spawnBoy2Man;
-            private final boolean removeCastExceptionCrash;
+//            private final boolean removeCastExceptionCrash;
+            private final boolean useWIPComboSystem;
 
             public SyncedValues(PacketBuffer buf) {
                 this.percentageChanceToGettingAStandForMob = buf.readInt();
@@ -198,7 +204,8 @@ public class Config {
                 this.smallAnarchyWithStands = buf.readBoolean();
                 this.dropStandDiscFromMobs = buf.readBoolean();
                 this.spawnBoy2Man = buf.readBoolean();
-                this.removeCastExceptionCrash = buf.readBoolean();
+//                this.removeCastExceptionCrash = buf.readBoolean();
+                this.useWIPComboSystem = buf.readBoolean();
             }
 
             private SyncedValues(Common config) {
@@ -211,7 +218,8 @@ public class Config {
                 smallAnarchyWithStands = config.smallAnarchyWithStands.get();
                 dropStandDiscFromMobs = config.dropStandDiscFromMobs.get();
                 spawnBoy2Man = config.spawnBoy2Man.get();
-                removeCastExceptionCrash = config.removeCastExceptionCrash.get();
+//                removeCastExceptionCrash = config.removeCastExceptionCrash.get();
+                useWIPComboSystem = config.useWIPComboSystem.get();
             }
 
             public static void resetConfig() {
@@ -224,7 +232,8 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.clearCache();
                 COMMON_SYNCED_TO_CLIENT.dropStandDiscFromMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.clearCache();
-                COMMON_SYNCED_TO_CLIENT.removeCastExceptionCrash.clearCache();
+//                COMMON_SYNCED_TO_CLIENT.removeCastExceptionCrash.clearCache();
+                COMMON_SYNCED_TO_CLIENT.useWIPComboSystem.clearCache();
             }
 
             public static void syncWithClient(ServerPlayerEntity player) {
@@ -260,7 +269,8 @@ public class Config {
                 buf.writeBoolean(smallAnarchyWithStands);
                 buf.writeBoolean(dropStandDiscFromMobs);
                 buf.writeBoolean(spawnBoy2Man);
-                buf.writeBoolean(removeCastExceptionCrash);
+//                buf.writeBoolean(removeCastExceptionCrash);
+                buf.writeBoolean(useWIPComboSystem);
             }
 
             public void changeConfigValues() {
@@ -273,7 +283,8 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.set(smallAnarchyWithStands);
                 COMMON_SYNCED_TO_CLIENT.dropStandDiscFromMobs.set(dropStandDiscFromMobs);
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.set(spawnBoy2Man);
-                COMMON_SYNCED_TO_CLIENT.removeCastExceptionCrash.set(removeCastExceptionCrash);
+//                COMMON_SYNCED_TO_CLIENT.removeCastExceptionCrash.set(removeCastExceptionCrash);
+                COMMON_SYNCED_TO_CLIENT.useWIPComboSystem.set(useWIPComboSystem);
             }
         }
     }

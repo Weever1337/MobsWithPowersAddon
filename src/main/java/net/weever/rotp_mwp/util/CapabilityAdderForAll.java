@@ -43,10 +43,7 @@ public class CapabilityAdderForAll {
 
     private static final ArrayList<String> blockedStandActions = Util.make(new ArrayList<>(), list -> {
         list.add(ModStandsInit.STAR_PLATINUM_ZOOM.getId().toString());
-        list.add(ModStandsInit.STAR_PLATINUM_INHALE.getId().toString());
-        list.add(ModStandsInit.MAGICIANS_RED_DETECTOR.getId().toString());
         list.add(ModStandsInit.CRAZY_DIAMOND_REPAIR.getId().toString());
-        list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_BULLET.getId().toString());
         list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_ANCHOR_MOVE.getId().toString());
     });
 
