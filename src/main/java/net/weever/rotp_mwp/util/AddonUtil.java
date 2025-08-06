@@ -4,6 +4,8 @@ import com.github.standobyte.jojo.action.ActionTarget;
 import com.github.standobyte.jojo.action.stand.StandAction;
 import com.github.standobyte.jojo.action.stand.TimeStop;
 import com.github.standobyte.jojo.entity.mob.rps.RockPaperScissorsKidEntity;
+import com.github.standobyte.jojo.init.power.JojoCustomRegistries;
+import com.github.standobyte.jojo.power.impl.nonstand.type.NonStandPowerType;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
 import com.github.standobyte.jojo.power.impl.stand.StandUtil;
 import com.github.standobyte.jojo.power.impl.stand.type.StandType;
@@ -15,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.HurtByTargetGoal;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -23,58 +26,94 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.weever.rotp_mwp.Config;
 import net.weever.rotp_mwp.MobsWithPowersAddon;
+import net.weever.rotp_mwp.entity.goal.NonStandAI;
 import net.weever.rotp_mwp.entity.goal.StandAI;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Mod.EventBusSubscriber(modid = MobsWithPowersAddon.MOD_ID)
 public class AddonUtil {
+    private static final String PROCESSED_TAG = MobsWithPowersAddon.MOD_ID + ":processed";
+
+    private static boolean isGECreated(Entity entity) { // I hope this won't have a lot of problems
+        CompoundNBT nbt = new CompoundNBT();
+        entity.saveWithoutId(nbt);
+        if (nbt.contains("DeathLootTable", 8)) {
+            return nbt.getString("DeathLootTable").equals("empty");
+        }
+        return false;
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onMobSpawn(EntityJoinWorldEvent event) {
         Entity entity = event.getEntity();
-        if (entity == null || CapabilityAdderForAll.isBlockedEntity(entity)) return;
-        if (!entity.level.isClientSide() && entity instanceof LivingEntity) {
-            LivingEntity livingEntity = (LivingEntity) entity;
-            if (livingEntity instanceof MobEntity) {
-                MobEntity mobEntity = (MobEntity) livingEntity;
-                Random random = new Random();
-                if (random.nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(entity.level.isClientSide()))) {
-                    IStandPower.getStandPowerOptional(mobEntity).ifPresent(power -> {
-                        if (!power.hasPower()) {
-                            if (mobEntity instanceof VillagerEntity && ((VillagerEntity) mobEntity).isBaby() && Config.getCommonConfigInstance(entity.level.isClientSide()).spawnBoy2Man.get()) {
-                                RockPaperScissorsKidEntity.turnFromArrow(mobEntity);
-                            } else {
-                                power.givePower(randomStand(mobEntity, random));
-                            }
-                            power.setResolveLevel(random.nextInt(4));
-                        }
-                    });
-                }
-                if (!mobEntity.goalSelector.getRunningGoals().anyMatch(goal -> goal.getGoal() instanceof StandAI)) {
-                    mobEntity.goalSelector.addGoal(1, new StandAI(mobEntity));
-                }
-                if (livingEntity instanceof CreatureEntity) {
-                    CreatureEntity creatureEntity = (CreatureEntity) livingEntity;
-                    if (!creatureEntity.targetSelector.getRunningGoals().anyMatch(goal -> goal.getGoal() instanceof HurtByTargetGoal)) {
-                        creatureEntity.targetSelector.addGoal(1, new HurtByTargetGoal(creatureEntity));
-                    }
-                }
-            }
-        }
-    }
 
+        if (entity.level.isClientSide() || !(entity instanceof MobEntity)
+                || CapabilityAdderForAll.isBlockedEntity(entity)
+                || entity.getPersistentData().getBoolean(PROCESSED_TAG)
+                || isGECreated(entity)) {
+            return;
+        }
+
+        MobEntity mobEntity = (MobEntity) entity;
+        Random random = new Random();
+
+        if (random.nextFloat() < calculateFromPercentageToFloat(getPercentageOfGettingStand(false))) {
+            IStandPower.getStandPowerOptional(mobEntity).ifPresent(power -> {
+                if (!power.hasPower()) {
+                    if (mobEntity instanceof VillagerEntity && mobEntity.isBaby() && Config.getCommonConfigInstance(false).spawnBoy2Man.get()) {
+                        RockPaperScissorsKidEntity.turnFromArrow(mobEntity);
+                    } else {
+                        power.givePower(randomStand(mobEntity, random));
+                    }
+                    power.setResolveLevel(random.nextInt(4));
+                }
+            });
+        }
+
+        //                INonStandPower.getNonStandPowerOptional(mobEntity).ifPresent(nonPower -> {
+        //                    if (!nonPower.hasPower()) {
+        //                        nonPower.givePower(ModPowers.HAMON.get());
+        //                        Optional<HamonData> hamonOp = nonPower.getTypeSpecificData(ModPowers.HAMON.get());
+        //                        hamonOp.ifPresent(hamonData -> {
+        //                            hamonData.addHamonSkill(
+        //                                    mobEntity,
+        //                                    ModHamonSkills.OVERDRIVE.get(),
+        //                                    false,
+        //                                    true
+        //                            );
+        //                            hamonData.addHamonSkill(
+        //                                    mobEntity,
+        //                                    ModHamonSkills.OVERDRIVE_BARRAGE.get(),
+        //                                    false,
+        //                                    true
+        //                            );
+        //                            hamonData.addHamonSkill(
+        //                                    mobEntity,
+        //                                    ModHamonSkills.ZOOM_PUNCH.get(),
+        //                                    false,
+        //                                    true
+        //                            );
+        //                        });
+        //                    }
+        //                });
+
+        entity.getPersistentData().putBoolean(PROCESSED_TAG, true);
+    }
 
     public static List<StandAction> getListOfUnlockedStandActions(IStandPower power) {
         List<StandAction> actions = new ArrayList<>();
+        Random random = power.getUser().level.random;
+
         for (StandAction action : power.getAllUnlockedActions()) {
             if (action instanceof TimeStop) {
-                if (power.getLearningProgressPoints(action) < ((TimeStop) action).getMaxTimeStopTicks(power)) {
-                    power.addLearningProgressPoints(action, ((TimeStop) action).getMaxTimeStopTicks(power));
+                int maxTicks = ((TimeStop) action).getMaxTimeStopTicks(power);
+                if (maxTicks > 0) {
+                    int randomTicks = random.nextInt(maxTicks + 1);
+                    power.setLearningProgressPoints(action, randomTicks);
                 }
             }
             actions.add(action);
@@ -109,6 +148,20 @@ public class AddonUtil {
         return null;
     }
 
+    @Nullable
+    public static NonStandPowerType<?> randomPower(LivingEntity entity, Random random) {
+        if (!entity.level.isClientSide()) {
+            Collection<NonStandPowerType<?>> powers = JojoCustomRegistries.NON_STAND_POWERS.getRegistry().getValues();
+
+            if (powers.isEmpty()) {
+                return null;
+            }
+
+            return getRandomElement(powers, random);
+        }
+        return null;
+    }
+
     public static List<? extends String> getBlockedEntitiesList(boolean clientSide) {
         return Config.getCommonConfigInstance(clientSide).blockedEntities.get();
     }
@@ -125,11 +178,11 @@ public class AddonUtil {
         return Config.getCommonConfigInstance(clientSide).longRangeStands.get();
     }
 
-    public static int getPercentageOfGettingStand(boolean clientSide){
+    public static int getPercentageOfGettingStand(boolean clientSide) {
         return Config.getCommonConfigInstance(clientSide).percentageChanceToGettingAStandForMob.get();
     }
 
-    public static float calculateFromPercentageToFloat(int percentage){
+    public static float calculateFromPercentageToFloat(int percentage) {
         return percentage / 100.0f; // wtf are you doing man
     }
 
@@ -147,5 +200,11 @@ public class AddonUtil {
             return 32;
         }
         return 12.5f;
+    }
+
+    public static <T> T getRandomElement(Iterable<T> items, Random random) {
+        List<T> itemList = StreamSupport.stream(items.spliterator(), false)
+                .collect(Collectors.toList());
+        return itemList.get(random.nextInt(itemList.size()));
     }
 }

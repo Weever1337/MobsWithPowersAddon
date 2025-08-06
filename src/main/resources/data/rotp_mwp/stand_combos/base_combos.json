@@ -1,0 +1,159 @@
+{
+  "jojo:star_platinum": {
+    "use_by_resolve": {
+      "0lvl": ["basic_combo"],
+      "1lvl": ["basic_combo", "heavy_combo"],
+      "2lvl": ["basic_combo", "heavy_combo"],
+      "3lvl": ["basic_combo", "heavy_combo", "finger_combo"],
+      "4lvl": ["basic_combo", "heavy_combo", "finger_combo", "ts_combo"]
+    },
+    "block": "jojo:star_platinum_block",
+    "basic_combo": [
+      { "action": "jojo:star_platinum_punch", "distance": "<4" },
+      { "action": "jojo:star_platinum_punch", "distance": "<4" },
+      { "action": "jojo:star_platinum_barrage", "distance": "<3", "requiredStamina": 300 }
+    ],
+    "heavy_combo": [
+      { "action": "jojo:star_platinum_heavy_punch", "distance": "<5", "requiredStamina": 250 },
+      { "action": "jojo:star_platinum_uppercut", "distance": "<4", "requiredStamina": 200 }
+    ],
+    "finger_combo": [
+      { "action": "jojo:star_platinum_star_finger", "distance": ">5" },
+      { "action": "jojo:star_platinum_barrage", "distance": "<4", "requiredStamina": 300 }
+    ],
+    "ts_combo": [
+      { "action": "jojo:star_platinum_time_stop", "distance": "<15", "requiredStamina": 1000 }
+    ]
+  },
+  "jojo:the_world": {
+    "use_by_resolve": {
+      "0lvl": ["muda_combo"],
+      "1lvl": ["muda_combo", "kick_combo"],
+      "2lvl": ["muda_combo", "kick_combo", "ts_combo"],
+      "3lvl": ["muda_combo", "kick_combo", "ts_combo", "ts_punch_combo"]
+    },
+    "block": "jojo:the_world_block",
+    "muda_combo": [
+      { "action": "jojo:the_world_punch", "distance": "<4" },
+      { "action": "jojo:the_world_punch", "distance": "<4" },
+      { "action": "jojo:the_world_barrage", "distance": "<3", "requiredStamina": 350 }
+    ],
+    "kick_combo": [
+      { "action": "jojo:the_world_heavy_punch", "distance": "<4", "requiredStamina": 250 },
+      { "action": "jojo:the_world_kick", "distance": "<3", "requiredStamina": 200 }
+    ],
+    "ts_combo": [
+      { "action": "jojo:the_world_time_stop", "distance": "<15", "requiredStamina": 1000 }
+    ],
+    "ts_punch_combo": [
+      { "action": "jojo:the_world_ts_punch", "distance": "<10", "requiredStamina": 500 }
+    ]
+  },
+  "jojo:hierophant_green": {
+    "use_by_resolve": {
+      "0lvl": ["splash_combo"],
+      "1lvl": ["splash_combo", "binding_combo"],
+      "2lvl": ["splash_combo", "binding_combo"],
+      "3lvl": ["splash_combo", "binding_combo", "barrier_combo"]
+    },
+    "block": "jojo:hierophant_green_block",
+    "splash_combo": [
+      { "action": "jojo:hierophant_green_attack", "distance": "<12" },
+      { "action": "jojo:hierophant_green_emerald_splash", "distance": ">8", "requiredStamina": 400 }
+    ],
+    "binding_combo": [
+      { "action": "jojo:hierophant_green_attack_binding", "distance": ">6" },
+      { "action": "jojo:hierophant_green_es_concentrated", "distance": ">6", "requiredStamina": 200 }
+    ],
+    "barrier_combo": [
+      { "action": "jojo:hierophant_green_barrier", "distance": ">10" },
+      { "action": "jojo:hierophant_green_emerald_splash", "distance": ">8", "requiredStamina": 400 }
+    ]
+  },
+  "jojo:silver_chariot": {
+    "use_by_resolve": {
+      "0lvl": ["rapier_combo"],
+      "1lvl": ["rapier_combo", "dash_combo"],
+      "2lvl": ["rapier_combo", "dash_combo", "rapier_shot_combo"],
+      "3lvl": ["rapier_combo", "dash_combo", "rapier_shot_combo", "no_armor_combo"]
+    },
+    "block": "jojo:silver_chariot_block",
+    "rapier_combo": [
+      { "action": "jojo:silver_chariot_attack", "distance": "<5" },
+      { "action": "jojo:silver_chariot_attack", "distance": "<5" },
+      { "action": "jojo:silver_chariot_barrage", "distance": "<4", "requiredStamina": 300 }
+    ],
+    "dash_combo": [
+      { "action": "jojo:silver_chariot_dash_attack", "distance": "<8" },
+      { "action": "jojo:silver_chariot_sweeping_attack", "distance": "<4", "requiredStamina": 200 }
+    ],
+    "rapier_shot_combo": [
+      { "action": "jojo:silver_chariot_rapier_launch", "distance": ">7", "requiredStamina": 250 },
+      { "action": "jojo:silver_chariot_dash_attack", "distance": "<8" }
+    ],
+    "no_armor_combo": [
+      { "action": "jojo:silver_chariot_take_off_armor", "requiredStamina": 500 },
+      { "action": "jojo:silver_chariot_barrage", "distance": "<4", "requiredStamina": 300 }
+    ]
+  },
+  "jojo:magicians_red": {
+    "use_by_resolve": {
+      "0lvl": ["flame_combo"],
+      "1lvl": ["flame_combo"],
+      "2lvl": ["flame_combo", "fireball_combo"],
+      "3lvl": ["flame_combo", "fireball_combo"],
+      "4lvl": ["flame_combo", "fireball_combo", "bind_and_burn_combo"]
+    },
+    "block": "jojo:magicians_red_block",
+    "flame_combo": [
+      { "action": "jojo:magicians_red_punch", "distance": "<4" },
+      { "action": "jojo:magicians_red_flame_burst", "distance": "<6", "requiredStamina": 150 }
+    ],
+    "fireball_combo": [
+      { "action": "jojo:magicians_red_fireball", "distance": ">6", "requiredStamina": 200 },
+      { "action": "jojo:magicians_red_fireball", "distance": ">6", "requiredStamina": 200 }
+    ],
+    "bind_and_burn_combo": [
+      { "action": "jojo:magicians_red_red_bind", "distance": ">7", "requiredStamina": 300 },
+      { "action": "jojo:magicians_red_crossfire_hurricane", "distance": ">8", "requiredStamina": 900 }
+    ]
+  },
+  "jojo:crazy_diamond": {
+    "use_by_resolve": {
+      "0lvl": ["dora_combo"],
+      "1lvl": ["dora_combo", "heavy_combo"],
+      "2lvl": ["dora_combo", "heavy_combo"],
+      "3lvl": ["dora_combo", "heavy_combo"],
+      "4lvl": ["dora_combo", "heavy_combo", "blood_cutter_combo"]
+    },
+    "block": "jojo:crazy_diamond_block",
+    "dora_combo": [
+      { "action": "jojo:crazy_diamond_punch", "distance": "<4" },
+      { "action": "jojo:crazy_diamond_punch", "distance": "<4" },
+      { "action": "jojo:crazy_diamond_barrage", "distance": "<3", "requiredStamina": 300 }
+    ],
+    "heavy_combo": [
+      { "action": "jojo:crazy_diamond_heavy_punch", "distance": "<4", "requiredStamina": 250 },
+      { "action": "jojo:crazy_diamond_misshaping_punch", "distance": "<3", "requiredStamina": 200 }
+    ],
+    "blood_cutter_combo": [
+      { "action": "jojo:crazy_diamond_blood_cutter", "distance": ">6", "requiredStamina": 150 }
+    ]
+  },
+  "jojo:gold_experience": {
+    "use_by_resolve": {
+      "0lvl": ["muda_combo"],
+      "1lvl": ["muda_combo", "lifeshot_combo"]
+    },
+    "block": "jojo:gold_experience_block",
+    "muda_combo": [
+      { "action": "jojo:gold_experience_punch", "distance": "<4" },
+      { "action": "jojo:gold_experience_punch", "distance": "<4" },
+      { "action": "jojo:gold_experience_barrage", "distance": "<3", "requiredStamina": 300 }
+    ],
+    "lifeshot_combo": [
+      { "action": "jojo:gold_experience_heavy_punch", "distance": "<4", "requiredStamina": 250 },
+      { "action": "jojo:gold_experience_lifeshot_punch", "distance": "<3", "requiredStamina": 200 }
+    ]
+  }
+}

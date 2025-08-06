@@ -17,11 +17,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.world.World;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.weever.rotp_mwp.Config;
 import net.weever.rotp_mwp.MobsWithPowersAddon;
+import net.weever.rotp_mwp.mechanics.combo.ComboManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,6 @@ public class CapabilityAdderForAll {
         list.add(ModStandsInit.CRAZY_DIAMOND_BLOCK_ANCHOR_MOVE.getId().toString());
     });
 
-
     private static final ResourceLocation STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "stand");
     private static final ResourceLocation NON_STAND_CAP = new ResourceLocation(JojoMod.MOD_ID, "non_stand");
 
@@ -62,8 +63,13 @@ public class CapabilityAdderForAll {
         }
     }
 
+    @SubscribeEvent
+    public static void onAddReloadListeners(AddReloadListenerEvent event) {
+        event.addListener(new ComboManager());
+    }
+
     public static boolean isBlockedEntity(Entity entity) {
-        if (Config.getCommonConfigInstance(entity.level.isClientSide()).smallAnarchyWithStands.get()){
+        if (Config.getCommonConfigInstance(entity.level.isClientSide()).smallAnarchyWithStands.get()) {
             blockedEntities.remove(StandEntity.class);
         }
         try {

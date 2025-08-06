@@ -1,17 +1,18 @@
 package net.weever.rotp_mwp.entity.goal;
 
 import com.github.standobyte.jojo.action.stand.StandAction;
-import com.github.standobyte.jojo.action.stand.StandEntityLightAttack;
 import com.github.standobyte.jojo.power.impl.stand.IStandPower;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.weever.rotp_mwp.MobsWithPowersAddon;
+import net.weever.rotp_mwp.mechanics.combo.ComboManager;
+import net.weever.rotp_mwp.mechanics.combo.ComboStep;
+import net.weever.rotp_mwp.mechanics.combo.StandComboData;
 import net.weever.rotp_mwp.util.AddonUtil;
 import net.weever.rotp_mwp.util.CapabilityAdderForAll;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.weever.rotp_mwp.util.AddonUtil.getActionTarget;
@@ -19,9 +20,14 @@ import static net.weever.rotp_mwp.util.AddonUtil.getStandRange;
 
 public class StandAI extends Goal {
     private final MobEntity mobEntity;
-    private final Map<StandAction, Integer> cooldownMap = new HashMap<>();
+    private final Map<String, Integer> cooldownMap = new HashMap<>();
     private final Random random = new Random();
     private int actionChangeTicks = 0;
+
+    private String currentComboName = null;
+    private int comboStep = 0;
+    private int comboResetTicks = 0;
+    private static final int MAX_COMBO_TICK_DELAY = 60;
 
     public StandAI(MobEntity mobEntity) {
         this.mobEntity = mobEntity;
@@ -34,73 +40,179 @@ public class StandAI extends Goal {
 
     @Override
     public void tick() {
-        updateStand();
         updateCooldowns();
-        IStandPower.getStandPowerOptional(mobEntity).ifPresent(power -> {
-            actionChangeTicks++;
-            if (mobEntity.getTarget() != null && mobEntity.distanceTo(mobEntity.getTarget()) <= getStandRange(power.getType(), mobEntity.level)) {
-                power.refreshHeldActionTickState(true);
-                if (actionChangeTicks % 30 == 0) {
-                    List<StandAction> actions = AddonUtil.getListOfUnlockedStandActions(power);
-                    if (!actions.isEmpty()) {
-                        List<StandAction> availableActions = actions.stream()
-                                .filter(action -> !isOnCooldown(action) && action.checkConditions(mobEntity, power, getActionTarget(mobEntity)).isPositive() && action.getStaminaCost(power) <= power.getStamina() && !CapabilityAdderForAll.isBlockedAction(action, mobEntity.level))
-                                .collect(Collectors.toList());
-
-                        if (!availableActions.isEmpty()) {
-                            if (!power.isActive()) {
-                                power.toggleSummon();
-                            }
-                            StandAction randomAction = availableActions.get(random.nextInt(availableActions.size()));
-                            if (randomAction.getStaminaCost(power) <= power.getStamina()) {
-                                if (randomAction instanceof StandEntityLightAttack) {
-                                    for (int i = 0; i < 2; i++) {
-                                        power.clickAction(randomAction, false, getActionTarget(mobEntity), null);
-                                    }
-                                }
-                                if (randomAction.getHoldDurationToFire(power) > 0) {
-                                    power.setHeldAction(randomAction, getActionTarget(mobEntity));
-                                } else {
-                                    power.clickAction(randomAction, false, getActionTarget(mobEntity), null);
-                                }
-                                setCooldown(randomAction, randomAction.getCooldownTechnical(power));
-                            }
-                        } else {
-                            if (power.isActive()) {
-                                power.toggleSummon();
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (power.getHeldAction(true) != null) {
-                    power.stopHeldAction(true);
-                }
-                if (power.isActive()) {
-                    power.toggleSummon();
-                }
-            }
-        });
+        IStandPower.getStandPowerOptional(mobEntity).ifPresent(this::runAI);
     }
 
-    @Override
-    public boolean canContinueToUse() {
+    private void runAI(IStandPower power) {
+        power.tick();
+        power.postTick();
+
+        if (comboResetTicks > 0) {
+            comboResetTicks--;
+        } else {
+            resetCombo();
+        }
+
+        LivingEntity target = mobEntity.getTarget();
+        if (target == null || !target.isAlive() || mobEntity.distanceToSqr(target) > getStandRange(power.getType(), mobEntity.level) * getStandRange(power.getType(), mobEntity.level)) {
+            if (power.getHeldAction(true) != null) power.stopHeldAction(true);
+            if (power.isActive()) power.toggleSummon();
+            resetCombo();
+            return;
+        }
+
+        actionChangeTicks++;
+        if (actionChangeTicks % 20 != 0) return;
+
+        power.refreshHeldActionTickState(true);
+        if (!power.isActive()) power.toggleSummon();
+
+        Map<String, StandAction> allActions = AddonUtil.getListOfUnlockedStandActions(power).stream()
+                .collect(Collectors.toMap(a -> a.getRegistryName().toString(), a -> a, (a1, a2) -> a1));
+
+        if (allActions.isEmpty()) return;
+
+        String standId = power.getType().getRegistryName().toString();
+        StandComboData comboData = ComboManager.getDataForStand(standId);
+
+        if (comboData == null) {
+            performRandomAvailableAction(power, allActions, target);
+        } else {
+            performComboLogic(power, comboData, allActions, target);
+        }
+    }
+
+    private void performComboLogic(IStandPower power, StandComboData comboData, Map<String, StandAction> allActions, LivingEntity target) {
+        if (currentComboName != null) {
+            tryToContinueCombo(power, comboData, allActions, target);
+        } else {
+            tryToStartNewCombo(power, comboData, allActions, target);
+        }
+    }
+
+    private void tryToContinueCombo(IStandPower power, StandComboData comboData, Map<String, StandAction> allActions, LivingEntity target) {
+        List<ComboStep> currentStepList = comboData.getComboSteps(currentComboName);
+        if (currentStepList == null || comboStep >= currentStepList.size()) {
+            resetCombo();
+            return;
+        }
+
+        ComboStep nextStep = currentStepList.get(comboStep);
+        StandAction action = allActions.get(nextStep.getAction());
+
+        if (isActionAvailable(power, action, nextStep, mobEntity.distanceTo(target))) {
+            performAction(power, action);
+            comboStep++;
+            comboResetTicks = MAX_COMBO_TICK_DELAY;
+        } else {
+            resetCombo();
+        }
+    }
+
+    private void tryToStartNewCombo(IStandPower power, StandComboData comboData, Map<String, StandAction> allActions, LivingEntity target) {
+        int resolve = power.getResolveLevel();
+        List<String> availableComboNames = comboData.getAvailableCombos(resolve);
+
+        if (availableComboNames.isEmpty()) {
+            performRandomAvailableAction(power, allActions, target);
+            return;
+        }
+
+        Collections.shuffle(availableComboNames);
+
+        for (String comboName : availableComboNames) {
+            List<ComboStep> stepList = comboData.getComboSteps(comboName);
+            if (stepList != null && !stepList.isEmpty()) {
+                ComboStep firstStep = stepList.get(0);
+                StandAction firstAction = allActions.get(firstStep.getAction());
+                if (isActionAvailable(power, firstAction, firstStep, mobEntity.distanceTo(target))) {
+                    currentComboName = comboName;
+                    comboStep = 0;
+                    tryToContinueCombo(power, comboData, allActions, target);
+                    return;
+                }
+            }
+        }
+
+        performRandomAvailableAction(power, allActions, target);
+    }
+
+    private void performRandomAvailableAction(IStandPower power, Map<String, StandAction> allActions, LivingEntity target) {
+        List<StandAction> availableActions = allActions.values().stream()
+                .filter(action -> isActionAvailable(power, action, null, mobEntity.distanceTo(target)))
+                .collect(Collectors.toList());
+
+        if (!availableActions.isEmpty()) {
+            StandAction randomAction = availableActions.get(random.nextInt(availableActions.size()));
+            performAction(power, randomAction);
+        }
+    }
+
+    private void performAction(IStandPower power, StandAction action) {
+        if (action.getHoldDurationToFire(power) > 0) {
+            power.setHeldAction(action, getActionTarget(mobEntity));
+        } else {
+            power.clickAction(action, false, getActionTarget(mobEntity), null);
+        }
+        setCooldown(action.getRegistryName().toString(), action.getCooldownTechnical(power));
+    }
+
+    private boolean isActionAvailable(IStandPower power, StandAction action, ComboStep step, double distanceToTarget) {
+        if (action == null) return false;
+
+        boolean isAvailable = !isOnCooldown(action.getRegistryName().toString())
+                && action.checkConditions(mobEntity, power, getActionTarget(mobEntity)).isPositive()
+                && action.getStaminaCost(power) <= power.getStamina()
+                && !CapabilityAdderForAll.isBlockedAction(action, mobEntity.level);
+
+        if (!isAvailable) return false;
+
+        if (step != null) {
+            if (step.getRequiredStamina() != null && power.getStamina() < step.getRequiredStamina()) {
+                return false;
+            }
+            return step.getDistance() == null || checkDistance(step.getDistance(), distanceToTarget);
+        }
+
         return true;
     }
 
-    private boolean isOnCooldown(StandAction action) {
-        return cooldownMap.getOrDefault(action, 0) > 0;
+    private boolean checkDistance(String condition, double actualDistance) {
+        if (condition == null || condition.isEmpty()) return true;
+
+        try {
+            if (condition.startsWith(">=")) {
+                return actualDistance >= Double.parseDouble(condition.substring(2));
+            }
+            if (condition.startsWith("<=")) {
+                return actualDistance <= Double.parseDouble(condition.substring(2));
+            }
+            if (condition.startsWith(">")) {
+                return actualDistance > Double.parseDouble(condition.substring(1));
+            }
+            if (condition.startsWith("<")) {
+                return actualDistance < Double.parseDouble(condition.substring(1));
+            }
+        } catch (NumberFormatException e) {
+            MobsWithPowersAddon.getLogger().warn("Invalid distance format in combo JSON: {}", condition);
+            return false;
+        }
+        return true;
     }
 
-    private void setCooldown(StandAction action, int cooldownTicks) {
-        cooldownMap.put(action, cooldownTicks);
+    private void resetCombo() {
+        this.currentComboName = null;
+        this.comboStep = 0;
+        this.comboResetTicks = 0;
     }
 
-    private void updateStand() {
-        IStandPower.getStandPowerOptional(mobEntity).ifPresent(stand -> {
-            stand.tick();
-            stand.postTick();
-        });
+    private boolean isOnCooldown(String actionId) {
+        return cooldownMap.getOrDefault(actionId, 0) > 0;
+    }
+
+    private void setCooldown(String actionId, int cooldownTicks) {
+        cooldownMap.put(actionId, cooldownTicks + 10);
     }
 
     private void updateCooldowns() {
@@ -112,12 +224,12 @@ public class StandAI extends Goal {
     }
 
     @Override
-    public void start() {
-        return;
+    public boolean canContinueToUse() {
+        return mobEntity.getTarget() != null && mobEntity.isAlive();
     }
 
     @Override
     public void stop() {
-        return;
+        resetCombo();
     }
 }

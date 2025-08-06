@@ -1,0 +1,61 @@
+{
+  "jojo:hamon": {
+    "maintenance": {
+      "action": "jojo:hamon_breath",
+      "condition": "energy < 30%"
+    },
+    "overdrive_combo": [
+      { "action": "jojo:hamon_overdrive", "distance": "<3" },
+      { "action": "jojo:jonathan_overdrive_barrage", "distance": "<4", "requiredStamina": 700 }
+    ],
+    "ranged_combo": [
+      { "action": "jojo:hamon_zoom_punch", "distance": ">5", "requiredStamina": 450 },
+      { "action": "jojo:zeppeli_hamon_cutter", "distance": ">4", "requiredStamina": 400 }
+    ],
+    "bubble_combo": [
+      { "action": "jojo:caesar_bubble_launcher", "distance": ">5", "requiredStamina": 500 },
+      { "action": "jojo:caesar_bubble_cutter", "distance": ">6", "requiredStamina": 500 }
+    ]
+  },
+  "jojo:vampirism": {
+    "maintenance": {
+      "action": "jojo:vampirism_blood_drain",
+      "condition": "blood < 50%"
+    },
+    "drain_combo": [
+      { "action": "jojo:vampirism_claw_lacerate", "distance": "<3" },
+      { "action": "jojo:vampirism_blood_drain", "distance": "<2" }
+    ],
+    "freeze_combo": [
+      { "action": "jojo:vampirism_claw_lacerate", "distance": "<3" },
+      { "action": "jojo:vampirism_freeze", "distance": "<2.5" }
+    ],
+    "ultimate_combo": [
+      { "action": "jojo:vampirism_space_ripper_stingy_eyes", "distance": ">8" }
+    ]
+  },
+  "jojo:pillarman": {
+    "maintenance": {
+      "action": "jojo:pillarman_absorption",
+      "condition": "blood < 60%"
+    },
+    "blade_combo": [
+      { "action": "jojo:pillarman_blade_slash", "distance": "<3" },
+      { "action": "jojo:pillarman_blade_barrage", "distance": "<4" }
+    ],
+    "sandstorm_combo": [
+      { "action": "jojo:pillarman_small_sandstorm", "distance": "<8" },
+      { "action": "jojo:pillarman_divine_sandstorm", "distance": "<10" }
+    ]
+  },
+  "jojo:zombie": {
+    "maintenance": {
+      "action": "jojo:zombie_devour",
+      "condition": "blood < 70%"
+    },
+    "basic_combo": [
+      { "action": "jojo:zombie_claw_lacerate", "distance": "<3" },
+      { "action": "jojo:zombie_devour", "distance": "<2" }
+    ]
+  }
+}

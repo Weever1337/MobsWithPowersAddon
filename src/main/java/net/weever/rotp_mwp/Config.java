@@ -104,7 +104,7 @@ public class Config {
             blockedEntities = builder
                     .translation("rotp_mwp.config.blocked_entities")
                     .comment("    Blocked entities which cant have any Power")
-                    .defineListAllowEmpty(Lists.newArrayList("blockedEntities"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_kq:sheer_heart"), obj -> obj instanceof String);
+                    .defineListAllowEmpty(Lists.newArrayList("blockedEntities"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_zkq:sheer_heart"), obj -> obj instanceof String);
             blockedStandsForMobs = builder
                     .translation("rotp_mwp.config.blocked_stands")
                     .comment("    Blocked stands that cant have any mobs in them",

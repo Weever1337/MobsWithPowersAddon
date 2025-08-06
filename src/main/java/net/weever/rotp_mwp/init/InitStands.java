@@ -24,8 +24,14 @@ public class InitStands {
     public static final RegistryObject<GiveRandomStand> GIVE_RANDOM_STAND = ACTIONS.register("give_random_stand",
             () -> new GiveRandomStand(new GiveRandomStand.Builder()));
 
+    public static final RegistryObject<GiveRandomPower> GIVE_RANDOM_POWER = ACTIONS.register("give_random_power",
+            () -> new GiveRandomPower(new GiveRandomPower.Builder().shiftVariationOf(GIVE_RANDOM_STAND)));
+
     public static final RegistryObject<RemoveStand> REMOVE_STAND = ACTIONS.register("remove_stand",
-            () -> new RemoveStand(new RemoveStand.Builder().shiftVariationOf(GIVE_RANDOM_STAND)));
+            () -> new RemoveStand(new RemoveStand.Builder()));
+
+    public static final RegistryObject<RemovePower> REMOVE_POWER = ACTIONS.register("remove_power",
+            () -> new RemovePower(new RemovePower.Builder().shiftVariationOf(REMOVE_STAND)));
 
     public static final RegistryObject<NoAi> NO_AI = ACTIONS.register("no_ai",
             () -> new NoAi(new NoAi.Builder()));
@@ -53,7 +59,8 @@ public class InitStands {
                             )
                             .leftClickHotbar(
                                     TOGGLE_SUMMON.get(),
-                                    AGGRO_ONE_TO_TWO.get()
+                                    AGGRO_ONE_TO_TWO.get(),
+                                    REMOVE_STAND.get()
                             )
                             .rightClickHotbar(
                                     GIVE_RANDOM_STAND.get(),
