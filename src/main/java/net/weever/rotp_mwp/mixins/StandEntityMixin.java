@@ -19,18 +19,27 @@ import java.util.UUID;
 
 @Mixin(StandEntity.class)
 public abstract class StandEntityMixin {
-    @Unique private static final UUID BABY_ATTACK_DAMAGE_UUID = UUID.fromString("093864b1-a43a-459a-935d-627c78c630ed");
-    @Unique private static final UUID BABY_ATTACK_SPEED_UUID = UUID.fromString("fa8875c2-a6a9-497a-9abd-564a58b5676b");
-    @Unique private static final UUID BABY_REACH_DISTANCE_UUID = UUID.fromString("02438d49-4957-4501-a94b-21436baa9a14");
+    @Unique
+    private static final UUID BABY_ATTACK_DAMAGE_UUID = UUID.fromString("093864b1-a43a-459a-935d-627c78c630ed");
+    @Unique
+    private static final UUID BABY_ATTACK_SPEED_UUID = UUID.fromString("fa8875c2-a6a9-497a-9abd-564a58b5676b");
+    @Unique
+    private static final UUID BABY_REACH_DISTANCE_UUID = UUID.fromString("02438d49-4957-4501-a94b-21436baa9a14");
 
-    @Unique private static final String MODIFIER_NAME = "Baby Stand debuff";
-    @Unique private static final double DAMAGE_MODIFIER = -2.0;
-    @Unique private static final double SPEED_MODIFIER = -2.5;
-    @Unique private static final double REACH_MODIFIER = -2.0;
+    @Unique
+    private static final String MODIFIER_NAME = "Baby Stand debuff";
+    @Unique
+    private static final double DAMAGE_MODIFIER = -2.0;
+    @Unique
+    private static final double SPEED_MODIFIER = -2.5;
+    @Unique
+    private static final double REACH_MODIFIER = -2.0;
 
-    @Unique private static final float BABY_HEIGHT_THRESHOLD = 1.5f;
+    @Unique
+    private static final float BABY_HEIGHT_THRESHOLD = 1.5f;
 
-    @Unique private boolean rotp_mwp$isBabyAttributeApplied = false;
+    @Unique
+    private boolean rotp_mwp$isBabyAttributeApplied = false;
 
     @Inject(method = "isBaby", at = @At("HEAD"), cancellable = true)
     private void rotp_mwp$isBaby(CallbackInfoReturnable<Boolean> cir) {
@@ -60,8 +69,7 @@ public abstract class StandEntityMixin {
             }
             applyBabyAttributes(standEntity, scaleFactor);
             this.rotp_mwp$isBabyAttributeApplied = true;
-        }
-        else if (!shouldBeBaby && this.rotp_mwp$isBabyAttributeApplied) {
+        } else if (!shouldBeBaby && this.rotp_mwp$isBabyAttributeApplied) {
             removeBabyAttributes(standEntity);
             this.rotp_mwp$isBabyAttributeApplied = false;
         }
@@ -71,28 +79,27 @@ public abstract class StandEntityMixin {
     private void rotp_mwp$defaultRotation(CallbackInfo ci) {
         StandEntity standEntity = (StandEntity) (Object) this;
         LivingEntity user = standEntity.getUser();
-
         if (user != null && !standEntity.isManuallyControlled() && !standEntity.isRemotePositionFixed()) {
-            if (user instanceof MobEntity && ((MobEntity) user).getTarget() != null) {
-                LivingEntity target = ((MobEntity) user).getTarget();
+            if (user instanceof MobEntity) {
+                MobEntity mobUser = (MobEntity) user;
+                LivingEntity target = mobUser.getTarget();
 
-                double deltaX = target.getX() - standEntity.getX();
-                double deltaY = target.getEyeY() - standEntity.getEyeY();
-                double deltaZ = target.getZ() - standEntity.getZ();
+                if (target != null) {
+                    double deltaX = target.getX() - standEntity.getX();
+                    double deltaY = target.getEyeY() - standEntity.getEyeY();
+                    double deltaZ = target.getZ() - standEntity.getZ();
 
-                double horizontalDistance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+                    float yRot = (float) (Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90.0F);
+                    float xRot = (float) -Math.toDegrees(Math.atan2(deltaY, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ)));
 
-                float yRot = (float) (Math.toDegrees(Math.atan2(deltaZ, deltaX)) - 90.0F);
-                float xRot = (float) -Math.toDegrees(Math.atan2(deltaY, horizontalDistance));
-
-                standEntity.setRot(yRot, xRot);
-                standEntity.setYHeadRot(yRot);
-            }
-            else {
+                    standEntity.setRot(yRot, xRot);
+                }
+            } else {
                 standEntity.setRot(user.yRot, user.xRot);
-                standEntity.setYHeadRot(user.yHeadRot);
             }
         }
+
+        standEntity.setYHeadRot(standEntity.yRot);
         ci.cancel();
     }
 
