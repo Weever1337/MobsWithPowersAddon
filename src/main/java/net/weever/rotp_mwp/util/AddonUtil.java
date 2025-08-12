@@ -34,7 +34,7 @@ import java.util.stream.StreamSupport;
 public class AddonUtil {
     private static final String PROCESSED_TAG = MobsWithPowersAddon.MOD_ID + ":processed";
 
-    private static boolean isGECreated(Entity entity) { // I hope this won't have a lot of problems
+    private static boolean isGECreated(Entity entity) {
         CompoundNBT nbt = new CompoundNBT();
         entity.saveWithoutId(nbt);
         if (nbt.contains("DeathLootTable", 8)) {
@@ -69,34 +69,6 @@ public class AddonUtil {
                 }
             });
         }
-
-        //                INonStandPower.getNonStandPowerOptional(mobEntity).ifPresent(nonPower -> {
-        //                    if (!nonPower.hasPower()) {
-        //                        nonPower.givePower(ModPowers.HAMON.get());
-        //                        Optional<HamonData> hamonOp = nonPower.getTypeSpecificData(ModPowers.HAMON.get());
-        //                        hamonOp.ifPresent(hamonData -> {
-        //                            hamonData.addHamonSkill(
-        //                                    mobEntity,
-        //                                    ModHamonSkills.OVERDRIVE.get(),
-        //                                    false,
-        //                                    true
-        //                            );
-        //                            hamonData.addHamonSkill(
-        //                                    mobEntity,
-        //                                    ModHamonSkills.OVERDRIVE_BARRAGE.get(),
-        //                                    false,
-        //                                    true
-        //                            );
-        //                            hamonData.addHamonSkill(
-        //                                    mobEntity,
-        //                                    ModHamonSkills.ZOOM_PUNCH.get(),
-        //                                    false,
-        //                                    true
-        //                            );
-        //                        });
-        //                    }
-        //                });
-
         entity.getPersistentData().putBoolean(PROCESSED_TAG, true);
     }
 
@@ -158,8 +130,8 @@ public class AddonUtil {
         return null;
     }
 
-    public static List<? extends String> getBlockedEntitiesList(boolean clientSide) {
-        return Config.getCommonConfigInstance(clientSide).blockedEntities.get();
+    public static List<? extends String> getEntityList(boolean clientSide) {
+        return Config.getCommonConfigInstance(clientSide).entityList.get();
     }
 
     public static List<? extends String> getBlockedStandsForMobsList(boolean clientSide) {
@@ -179,7 +151,7 @@ public class AddonUtil {
     }
 
     public static float calculateFromPercentageToFloat(int percentage) {
-        return percentage / 100.0f; // wtf are you doing man
+        return percentage / 100.0f;
     }
 
     public static ActionTarget getActionTarget(LivingEntity livingEntity) {

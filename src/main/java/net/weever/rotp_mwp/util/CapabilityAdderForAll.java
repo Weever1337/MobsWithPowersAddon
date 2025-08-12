@@ -69,11 +69,23 @@ public class CapabilityAdderForAll {
         if (Config.getCommonConfigInstance(entity.level.isClientSide()).smallAnarchyWithStands.get()) {
             blockedEntities.remove(StandEntity.class);
         }
+        if (blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass()))) {
+            return true;
+        }
+
         try {
             String uniqueId = entity.getType().getRegistryName().toString();
-            return blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass())) || getBlockedEntitiesList(entity.level.isClientSide()).contains(uniqueId);
+            Config.Common config = Config.getCommonConfigInstance(entity.level.isClientSide());
+            boolean useWhitelist = config.useEntityWhitelist.get();
+            List<? extends String> list = getEntityList(entity.level.isClientSide());
+
+            if (useWhitelist) {
+                return !list.contains(uniqueId);
+            } else {
+                return list.contains(uniqueId);
+            }
         } catch (NullPointerException exception) {
-            return blockedEntities.stream().anyMatch(clazz -> clazz.isAssignableFrom(entity.getClass()));
+            return true;
         }
     }
 

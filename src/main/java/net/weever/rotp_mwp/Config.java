@@ -75,7 +75,8 @@ public class Config {
 
     public static class Common {
         public final ForgeConfigSpec.IntValue percentageChanceToGettingAStandForMob;
-        public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockedEntities;
+        public final ForgeConfigSpec.BooleanValue useEntityWhitelist;
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> entityList;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockedStandsForMobs;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> blockedStandActionsForMobs;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> longRangeStands;
@@ -83,7 +84,6 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue smallAnarchyWithStands;
         public final ForgeConfigSpec.BooleanValue dropStandDiscFromMobs;
         public final ForgeConfigSpec.BooleanValue spawnBoy2Man;
-//        public final ForgeConfigSpec.BooleanValue removeCastExceptionCrash;
         public final ForgeConfigSpec.BooleanValue useWIPComboSystem;
         private boolean loaded = false;
 
@@ -99,51 +99,67 @@ public class Config {
             builder.push("Settings");
             percentageChanceToGettingAStandForMob = builder
                     .translation("rotp_mwp.config.percentageChanceToGettingAStandForMob")
-                    .comment("    Percentage chance of getting a Stand for Mob",
-                            "    - Default to 5%")
+                    .comment("    The percentage chance for a mob to get a Stand upon spawning.",
+                            "    - Default: 5%")
                     .defineInRange("percentageChanceToGettingAStandForMob", 5, 0, 100);
-            blockedEntities = builder
-                    .translation("rotp_mwp.config.blocked_entities")
-                    .comment("    Blocked entities which cant have any Power")
-                    .defineListAllowEmpty(Lists.newArrayList("blockedEntities"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_zkq:sheer_heart", "rotp_stfn:player_arm", "rotp_stfn:player_leg", "rotp_stfn:player_head"), obj -> obj instanceof String);
+
+            useEntityWhitelist = builder
+                    .translation("rotp_mwp.config.use_entity_whitelist")
+                    .comment("    Determines how the 'entityList' will work.",
+                            "    - false (default): Blacklist. Entities on the list are FORBIDDEN from getting powers.",
+                            "    - true: Whitelist. ONLY entities on the list CAN get powers.")
+                    .define("useEntityWhitelist", false);
+
+            entityList = builder
+                    .translation("rotp_mwp.config.entity_list")
+                    .comment("    A list of entity IDs used as either a blacklist or a whitelist.",
+                            "    Its behavior is determined by the 'useEntityWhitelist' option.")
+                    .defineListAllowEmpty(Lists.newArrayList("entityList"), () -> Arrays.asList("rotp_harvest:harvest", "rotp_zbc:bad_soldier", "rotp_zbc:bad_tank", "rotp_zbc:bad_helicopter", "rotp_pj:pearljam", "rotp_zkq:sheer_heart", "rotp_stfn:player_arm", "rotp_stfn:player_leg", "rotp_stfn:player_head"), obj -> obj instanceof String);
+
             blockedStandsForMobs = builder
                     .translation("rotp_mwp.config.blocked_stands")
-                    .comment("    Blocked stands that cant have any mobs in them",
-                            "    - HAVE SOME PROBLEMS WITH: Harvest (with summon), Bad Company (with summon), Weather Report (Because dont optimized for Mobs (using ServerPlayerEntity))",
-                            "    - If you want to help to fix this problems - send crash reports to addons topics")
+                    .comment("    A blacklist of Stands that mobs cannot obtain.",
+                            "    - SOME STANDS CAUSE ISSUES: Harvest (summon), Bad Company (summon), Weather Report (optimized only for players).",
+                            "    - If you want to help fix these issues, please send crash reports to the addon's Discord thread!")
                     .defineListAllowEmpty(Lists.newArrayList("blockedStandsForMobs"), () -> Arrays.asList("rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_wr:weather_report", "rotp_ctr:catch_the_rainbow", "rotp_metallica:metallica", "rotp_zwa:white_album", "rotp_wou:wonder_of_you", "rotp_wonderofu:wonderofu", "rotp_lovers:lovers"), obj -> obj instanceof String);
+
             blockedStandActionsForMobs = builder
                     .translation("rotp_mwp.config.blocked_actions")
-                    .comment("    Blocked stand actions for Mobs. They cant use them. By default: SP's Zoom, CD's Repair, CD's Anchor Move")
+                    .comment("    A blacklist of Stand abilities that mobs will be unable to use.")
                     .defineListAllowEmpty(Lists.newArrayList("blockedStandActions"), () -> Arrays.asList("rotp_harvest:search", "rotp_harvest:go_to_this_place", "rotp_harvest:set_target", "rotp_harvest:forget_target", "rotp_zbc:set_target", "rotp_zbc:forget_target", "rotp_harvest:stay_with", "rotp_harvest:carry_up"), obj -> obj instanceof String);
+
             longRangeStands = builder
                     .translation("rotp_mwp.config.long_range_stands")
-                    .comment("    Long range stands for Mobs. They have 30 blocks range.")
+                    .comment("    A list of long-range Stands. Increases their operational range to 32 blocks for mobs.")
                     .defineListAllowEmpty(Lists.newArrayList("longRangeStands"), () -> Arrays.asList("rotp_harvest:harvest_stand", "rotp_zbc:bad_company", "rotp_zgd:green_day"), obj -> obj instanceof String);
+
             useAddonStands = builder
                     .translation("rotp.mwp.config.use_addon_stands")
-                    .comment("    Mobs will have stands from addons. ALSO, MAYBE HAVE SOME PROBLEMS, CRASH REPORTS SEND TO ADDONS!!!!!!!!")
+                    .comment("    Allow mobs to get Stands from other addons.",
+                            "    WARNING: THIS MAY CAUSE ISSUES AND CRASHES! Please send reports to the addon's Discord thread.")
                     .define("useAddonStands", false);
+
             smallAnarchyWithStands = builder
                     .translation("rotp.mwp.config.smallanarchywithstands")
-                    .comment("    Adding a way to give a stand to stand to stand to stand to stand....")
+                    .comment("    Allows giving a Stand to a Stand. May lead to chaos and lag.")
                     .define("smallAnarchyWithStands", false);
+
             dropStandDiscFromMobs = builder
                     .translation("rotp.mwp.config.drop_stand_disc_from_mobs")
-                    .comment("    If enabled, Stand users drop their Stand's Disc upon death, BUT FOR MOB VERSION",
-                            "    - Works only when keepStandOnDeath (in jojo-common config) is set to false.")
+                    .comment("    If enabled, Stand-user mobs will drop a disc of their Stand upon death.",
+                            "    - Only works if 'keepStandOnDeath' in the 'jojo-common' config is set to 'false'.")
                     .define("dropStandDiscFromMobs", false);
+
             spawnBoy2Man = builder
                     .translation("rotp.mwp.config.spawnboy2man")
-                    .comment("    Boy2Man will spawn in villages... (WARNING: This kid W.I.P in a mod, and can have some bugs)")
+                    .comment("    Allows Boy II Man to spawn in villages.",
+                            "    - WARNING: This entity is a Work-In-Progress and may have bugs!")
                     .define("spawnBoy2Man", false);
-//            removeCastExceptionCrash = builder
-//                    .translation("rotp.mwp.config.remove_cast_exception_crash")
-//                    .comment("    Remove cast exception crash")
-//                    .define("removeCastExceptionCrash", false);
+
             useWIPComboSystem = builder
                     .translation("rotp.mwp.config.usewipcombosystem")
-                    .comment("    Use W.I.P Combo System. If it's false mobs will use random abilities")
+                    .comment("    Use the advanced combo system for mobs.",
+                            "    - If disabled, mobs will use random abilities without any logic.")
                     .define("useWIPComboSystem", true);
             builder.pop();
 
@@ -162,7 +178,8 @@ public class Config {
 
         public static class SyncedValues {
             private final int percentageChanceToGettingAStandForMob;
-            private final List<String> blockedEntities;
+            private final boolean useEntityWhitelist;
+            private final List<String> entityList;
             private final List<String> blockedStandsForMobs;
             private final List<String> blockedStandActionsForMobs;
             private final List<String> longRangeStands;
@@ -170,16 +187,16 @@ public class Config {
             private final boolean smallAnarchyWithStands;
             private final boolean dropStandDiscFromMobs;
             private final boolean spawnBoy2Man;
-//            private final boolean removeCastExceptionCrash;
             private final boolean useWIPComboSystem;
 
             public SyncedValues(PacketBuffer buf) {
                 this.percentageChanceToGettingAStandForMob = buf.readInt();
+                this.useEntityWhitelist = buf.readBoolean();
 
-                int blockedEntitiesSize = buf.readInt();
-                this.blockedEntities = new ArrayList<>(blockedEntitiesSize);
-                for (int i = 0; i < blockedEntitiesSize; i++) {
-                    blockedEntities.add(buf.readUtf());
+                int entityListSize = buf.readInt();
+                this.entityList = new ArrayList<>(entityListSize);
+                for (int i = 0; i < entityListSize; i++) {
+                    entityList.add(buf.readUtf());
                 }
 
                 int blockedStandsForMobsSize = buf.readInt();
@@ -204,13 +221,13 @@ public class Config {
                 this.smallAnarchyWithStands = buf.readBoolean();
                 this.dropStandDiscFromMobs = buf.readBoolean();
                 this.spawnBoy2Man = buf.readBoolean();
-//                this.removeCastExceptionCrash = buf.readBoolean();
                 this.useWIPComboSystem = buf.readBoolean();
             }
 
             private SyncedValues(Common config) {
                 percentageChanceToGettingAStandForMob = config.percentageChanceToGettingAStandForMob.get();
-                blockedEntities = (List<String>) config.blockedEntities.get();
+                useEntityWhitelist = config.useEntityWhitelist.get();
+                entityList = (List<String>) config.entityList.get();
                 blockedStandsForMobs = (List<String>) config.blockedStandsForMobs.get();
                 blockedStandActionsForMobs = (List<String>) config.blockedStandActionsForMobs.get();
                 longRangeStands = (List<String>) config.longRangeStands.get();
@@ -218,13 +235,13 @@ public class Config {
                 smallAnarchyWithStands = config.smallAnarchyWithStands.get();
                 dropStandDiscFromMobs = config.dropStandDiscFromMobs.get();
                 spawnBoy2Man = config.spawnBoy2Man.get();
-//                removeCastExceptionCrash = config.removeCastExceptionCrash.get();
                 useWIPComboSystem = config.useWIPComboSystem.get();
             }
 
             public static void resetConfig() {
                 COMMON_SYNCED_TO_CLIENT.percentageChanceToGettingAStandForMob.clearCache();
-                COMMON_SYNCED_TO_CLIENT.blockedEntities.clearCache();
+                COMMON_SYNCED_TO_CLIENT.useEntityWhitelist.clearCache();
+                COMMON_SYNCED_TO_CLIENT.entityList.clearCache();
                 COMMON_SYNCED_TO_CLIENT.blockedStandsForMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.blockedStandActionsForMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.longRangeStands.clearCache();
@@ -232,7 +249,6 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.clearCache();
                 COMMON_SYNCED_TO_CLIENT.dropStandDiscFromMobs.clearCache();
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.clearCache();
-//                COMMON_SYNCED_TO_CLIENT.removeCastExceptionCrash.clearCache();
                 COMMON_SYNCED_TO_CLIENT.useWIPComboSystem.clearCache();
             }
 
@@ -246,8 +262,10 @@ public class Config {
 
             public void writeToBuf(PacketBuffer buf) {
                 buf.writeInt(percentageChanceToGettingAStandForMob);
-                buf.writeInt(blockedEntities.size());
-                for (String entity : blockedEntities) {
+                buf.writeBoolean(useEntityWhitelist);
+
+                buf.writeInt(entityList.size());
+                for (String entity : entityList) {
                     buf.writeUtf(entity);
                 }
 
@@ -269,13 +287,13 @@ public class Config {
                 buf.writeBoolean(smallAnarchyWithStands);
                 buf.writeBoolean(dropStandDiscFromMobs);
                 buf.writeBoolean(spawnBoy2Man);
-//                buf.writeBoolean(removeCastExceptionCrash);
                 buf.writeBoolean(useWIPComboSystem);
             }
 
             public void changeConfigValues() {
                 COMMON_SYNCED_TO_CLIENT.percentageChanceToGettingAStandForMob.set(percentageChanceToGettingAStandForMob);
-                COMMON_SYNCED_TO_CLIENT.blockedEntities.set(blockedEntities);
+                COMMON_SYNCED_TO_CLIENT.useEntityWhitelist.set(useEntityWhitelist);
+                COMMON_SYNCED_TO_CLIENT.entityList.set(entityList);
                 COMMON_SYNCED_TO_CLIENT.blockedStandsForMobs.set(blockedStandsForMobs);
                 COMMON_SYNCED_TO_CLIENT.blockedStandActionsForMobs.set(blockedStandActionsForMobs);
                 COMMON_SYNCED_TO_CLIENT.longRangeStands.set(longRangeStands);
@@ -283,7 +301,6 @@ public class Config {
                 COMMON_SYNCED_TO_CLIENT.smallAnarchyWithStands.set(smallAnarchyWithStands);
                 COMMON_SYNCED_TO_CLIENT.dropStandDiscFromMobs.set(dropStandDiscFromMobs);
                 COMMON_SYNCED_TO_CLIENT.spawnBoy2Man.set(spawnBoy2Man);
-//                COMMON_SYNCED_TO_CLIENT.removeCastExceptionCrash.set(removeCastExceptionCrash);
                 COMMON_SYNCED_TO_CLIENT.useWIPComboSystem.set(useWIPComboSystem);
             }
         }
